@@ -14,7 +14,9 @@
 # limitations under the License.
 #
 
-DEVICE_PACKAGE_OVERLAYS := device/samsung/smdk4412-common/overlay
+COMMON_PATH := device/samsung/smdk4412-common
+
+DEVICE_PACKAGE_OVERLAYS := $(COMMON_PATH)/overlay
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
@@ -25,18 +27,18 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 # Init files
 PRODUCT_COPY_FILES := \
-    device/samsung/smdk4412-common/init.bt.rc:root/init.bt.rc \
-    device/samsung/smdk4412-common/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
-    device/samsung/smdk4412-common/lpm.rc:root/lpm.rc \
-    device/samsung/smdk4412-common/init.trace.rc:root/init.trace.rc
+    $(COMMON_PATH)/init.bt.rc:root/init.bt.rc \
+    $(COMMON_PATH)/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
+    $(COMMON_PATH)/lpm.rc:root/lpm.rc \
+    $(COMMON_PATH)/init.trace.rc:root/init.trace.rc
 
 # Audio
 PRODUCT_COPY_FILES += \
-    device/samsung/smdk4412-common/configs/audio_policy.conf:system/etc/audio_policy.conf
+    $(COMMON_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf
 
 # Vold and Storage
 PRODUCT_COPY_FILES += \
-    device/samsung/smdk4412-common/configs/vold.fstab:system/etc/vold.fstab
+    $(COMMON_PATH)/configs/vold.fstab:system/etc/vold.fstab
 
 # Bluetooth configuration files
 PRODUCT_COPY_FILES += \
@@ -44,7 +46,7 @@ PRODUCT_COPY_FILES += \
 
 # Wifi
 PRODUCT_COPY_FILES += \
-    device/samsung/smdk4412-common/configs/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
+    $(COMMON_PATH)/configs/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
 
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
@@ -52,7 +54,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Gps
 PRODUCT_COPY_FILES += \
-    device/samsung/smdk4412-common/configs/gps.conf:system/etc/gps.conf
+    $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
 
 # Packages
 PRODUCT_PACKAGES := \
@@ -62,19 +64,12 @@ PRODUCT_PACKAGES := \
     camera.exynos4 \
     Camera \
     com.android.future.usb.accessory \
-    GalaxyS3Settings \
-    libsecril-client \
-    libsecril-client-sap \
     libsync \
+    lights.exynos4 \
     macloader \
-    SamsungServiceMode \
-    tinymix \
-    Torch
-
-# HAL
-PRODUCT_PACKAGES += \
     nfc.exynos4 \
-    lights.exynos4
+    tinymix \
+    Torch    
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -90,9 +85,9 @@ PRODUCT_COPY_FILES += \
 
 # NFCEE access control
 ifeq ($(TARGET_BUILD_VARIANT),user)
-    NFCEE_ACCESS_PATH := device/samsung/smdk4412-common/nfcee_access.xml
+    NFCEE_ACCESS_PATH := $(COMMON_PATH)/nfcee_access.xml
 else
-    NFCEE_ACCESS_PATH := device/samsung/smdk4412-common/nfcee_access_debug.xml
+    NFCEE_ACCESS_PATH := $(COMMON_PATH)/nfcee_access_debug.xml
 endif
 
 PRODUCT_COPY_FILES += \
@@ -119,15 +114,8 @@ PRODUCT_PACKAGES += \
 #   libOMX.SEC.VP8.Decoder
 
 PRODUCT_COPY_FILES += \
-    device/samsung/smdk4412-common/configs/media_profiles.xml:system/etc/media_profiles.xml \
-    device/samsung/smdk4412-common/configs/media_codecs.xml:system/etc/media_codecs.xml
-
-# RIL
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.telephony.ril_class=Smdk4210RIL \
-    mobiledata.interfaces=pdp0,wlan0,gprs,ppp0 \
-    ro.ril.hsxpa=1 \
-    ro.ril.gprsclass=10
+    $(COMMON_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml \
+    $(COMMON_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
@@ -161,7 +149,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
     frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
-    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.xml:system/etc/permissions/android.hardware.touchscreen.xml \
@@ -195,4 +182,5 @@ TARGET_OMX_PATH := hardware/samsung/exynos/multimedia/openmax
 $(call inherit-product, hardware/samsung/exynos4x12.mk)
 $(call inherit-product, vendor/cm/config/nfc_enhanced.mk)
 
+# Include non-opensource parts if available
 $(call inherit-product-if-exists, vendor/samsung/smdk4412-common/common-vendor.mk)
