@@ -16,7 +16,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(filter i9300 n7100,$(TARGET_DEVICE)),)
+ifneq ($(filter i9300 n7100 n8000 n8013,$(TARGET_DEVICE)),)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
