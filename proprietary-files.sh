@@ -125,7 +125,6 @@ adb pull /system/usr/keylayout/gpio-keys.kl ../../../vendor/$MANUFACTURER/$DEVIC
 adb pull /system/usr/keylayout/qwerty.kl ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/usr/keylayout/qwerty.kl
 adb pull /system/usr/keylayout/sii9234_rcp.kl ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/usr/keylayout/sii9234_rcp.kl
 adb pull /system/vendor/firmware/fimc_is_fw.bin ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/vendor/firmware/fimc_is_fw.bin
-adb pull /system/vendor/firmware/libpn544_fw.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/vendor/firmware/libpn544_fw.so
 adb pull /system/vendor/firmware/mfc_fw.bin ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/vendor/firmware/mfc_fw.bin
 adb pull /system/vendor/firmware/setfile.bin ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/vendor/firmware/setfile.bin
 
@@ -278,7 +277,6 @@ PRODUCT_COPY_FILES += \\
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/vendor/firmware/fimc_is_fw.bin:system/vendor/firmware/fimc_is_fw.bin \\
-    \$(LOCAL_PATH)/proprietary/system/vendor/firmware/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so \\
     \$(LOCAL_PATH)/proprietary/system/vendor/firmware/mfc_fw.bin:system/vendor/firmware/mfc_fw.bin \\
     \$(LOCAL_PATH)/proprietary/system/vendor/firmware/setfile.bin:system/vendor/firmware/setfile.bin
 
