@@ -60,7 +60,6 @@ adb pull /system/lib/libMcVersion.so ../../../vendor/$MANUFACTURER/$DEVICE/propr
 adb pull /system/lib/libQmageDecoder.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libQmageDecoder.so
 adb pull /system/lib/libTVOut.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libTVOut.so
 adb pull /system/lib/libUMP.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libUMP.so
-adb pull /system/lib/libakm.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libakm.so
 adb pull /system/lib/libcec.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libcec.so
 adb pull /system/lib/libddc.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libddc.so
 adb pull /system/lib/libedid.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libedid.so
@@ -164,7 +163,7 @@ PRODUCT_COPY_FILES += \\
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/cameradata/datapattern_420sp.yuv:system/cameradata/datapattern_420sp.yuv \\
-    \$(LOCAL_PATH)/proprietary/system/cameradata/datapattern_front_420sp.yuv:system/cameradata/datapattern_front_420sp.yuv \\
+    \$(LOCAL_PATH)/proprietary/system/cameradata/datapattern_front_420sp.yuv:system/cameradata/datapattern_front_420sp.yuv
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/etc/wifi/bcmdhd_apsta.bin_b2:system/etc/wifi/bcmdhd_apsta.bin_b2 \\
@@ -193,7 +192,6 @@ PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/lib/hw/hwcomposer.smdk4x12.so:system/lib/hw/hwcomposer.smdk4x12.so
 
 PRODUCT_COPY_FILES += \\
-    \$(LOCAL_PATH)/proprietary/system/lib/libakm.so:system/lib/libakm.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libsecion.so:system/lib/libsecion.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libMali.so:system/lib/libMali.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libMcClient.so:system/lib/libMcClient.so \\
