@@ -65,6 +65,7 @@ PRODUCT_PACKAGES := \
     camera.exynos4 \
     Camera \
     com.android.future.usb.accessory \
+    libnetcmdiface \
     libsync \
     lights.exynos4 \
     macloader \
