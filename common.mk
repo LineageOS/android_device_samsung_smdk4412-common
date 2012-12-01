@@ -65,6 +65,8 @@ PRODUCT_PACKAGES := \
     camera.exynos4 \
     Camera \
     com.android.future.usb.accessory \
+    gralloc.exynos4 \
+    hwcomposer.exynos4 \
     libnetcmdiface \
     libsync \
     lights.exynos4 \
