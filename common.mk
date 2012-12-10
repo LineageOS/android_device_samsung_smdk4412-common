@@ -27,7 +27,6 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 # Init files
 PRODUCT_COPY_FILES := \
-    $(COMMON_PATH)/init.bt.rc:root/init.bt.rc \
     $(COMMON_PATH)/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
     $(COMMON_PATH)/lpm.rc:root/lpm.rc \
     $(COMMON_PATH)/init.trace.rc:root/init.trace.rc
