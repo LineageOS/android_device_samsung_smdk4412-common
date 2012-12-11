@@ -322,7 +322,13 @@ int camera_take_picture(struct camera_device * device)
     if(!device)
         return -EINVAL;
 
-    return VENDOR_CALL(device, take_picture);
+    // We safely avoud returning the exact result of VENDOR_CALL here. If ZSL
+    // really bumps fast, take_picture will be called while a picture is already being
+    // taken, leading to "picture already running" error, crashing Gallery app. Afaik,
+    // there is no issue doing this.
+    VENDOR_CALL(device, take_picture);
+
+    return 0;
 }
 
 int camera_cancel_picture(struct camera_device * device)
