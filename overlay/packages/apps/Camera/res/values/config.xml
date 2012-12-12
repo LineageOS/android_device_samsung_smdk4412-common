@@ -26,4 +26,6 @@
     <bool name="hasSamsungCamSettings">true</bool>
     <!-- Use ZSL mode -->
     <bool name="enableZSL">true</bool>
+    <!-- The camera HAL does its own preview state management during snaps -->
+    <bool name="previewStopsDuringSnapshot">true</bool>
 </resources>
