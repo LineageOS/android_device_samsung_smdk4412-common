@@ -50,9 +50,6 @@ adb pull /system/etc/wifi/nvram_net.txt_semcosh ../../../vendor/$MANUFACTURER/$D
 adb pull /system/lib/egl/libEGL_mali.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/egl/libEGL_mali.so
 adb pull /system/lib/egl/libGLESv1_CM_mali.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/egl/libGLESv1_CM_mali.so
 adb pull /system/lib/egl/libGLESv2_mali.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/egl/libGLESv2_mali.so
-adb pull /system/lib/hw/gralloc.smdk4x12.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/hw/gralloc.smdk4x12.so
-adb pull /system/lib/hw/hwcomposer.smdk4x12.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/hw/hwcomposer.smdk4x12.so
-adb pull /system/lib/hw/lights.exynos4.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/hw/lights.exynos4.so
 adb pull /system/lib/libMali.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libMali.so
 adb pull /system/lib/libMcClient.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libMcClient.so
 adb pull /system/lib/libMcRegistry.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libMcRegistry.so
@@ -186,10 +183,6 @@ PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/lib/egl/libEGL_mali.so:system/lib/egl/libEGL_mali.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/egl/libGLESv1_CM_mali.so:system/lib/egl/libGLESv1_CM_mali.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/egl/libGLESv2_mali.so:system/lib/egl/libGLESv2_mali.so
-
-PRODUCT_COPY_FILES += \\
-    \$(LOCAL_PATH)/proprietary/system/lib/hw/gralloc.smdk4x12.so:system/lib/hw/gralloc.smdk4x12.so \\
-    \$(LOCAL_PATH)/proprietary/system/lib/hw/hwcomposer.smdk4x12.so:system/lib/hw/hwcomposer.smdk4x12.so
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/lib/libsecion.so:system/lib/libsecion.so \\
