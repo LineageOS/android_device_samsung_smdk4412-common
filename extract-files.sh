@@ -62,7 +62,6 @@ PRODUCT_PACKAGES += \\
     libsecion
 
 PRODUCT_COPY_FILES += \\
-
 EOF
 
 LINEEND=" \\"
