@@ -126,6 +126,10 @@ char * camera_fixup_setparams(int id, const char * settings)
             params.set(android::CameraParameters::KEY_ISO_MODE, "800");
     }
 
+#ifdef CAMERA_WITH_CITYID_PARAM
+    params.set(android::CameraParameters::KEY_CITYID, 0);
+#endif
+
     android::String8 strParams = params.flatten();
     char *ret = strdup(strParams.string());
 
