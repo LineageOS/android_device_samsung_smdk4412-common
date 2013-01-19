@@ -38,6 +38,7 @@ for FILE in `cat $COMMONPROPS | grep -v ^# | grep -v ^$`; do
 done
 
 
+
 (cat << EOF) | sed s/__COMMON__/$COMMON/g | sed s/__VENDOR__/$VENDOR/g > $COMMONMAKEFILE
 # Copyright (C) 2012 The CyanogenMod Project
 #
@@ -71,7 +72,11 @@ for FILE in `cat $COMMONPROPS | grep -v ^# | grep -v ^$`; do
     if [ $COUNT = "0" ]; then
         LINEEND=""
     fi
-    echo "\t\$(LOCAL_PATH)/proprietary/$FILE:$FILE$LINEEND" >> $COMMONMAKEFILE
+    if [ $FILE = "sbin/cbd" ] ;then
+        echo "\t\$(LOCAL_PATH)/proprietary/$FILE:root/$FILE$LINEEND" >> $COMMONMAKEFILE
+    else
+        echo "\t\$(LOCAL_PATH)/proprietary/$FILE:$FILE$LINEEND" >> $COMMONMAKEFILE
+    fi
 done
 
 (cat << EOF) | sed s/__COMMON__/$COMMON/g | sed s/__VENDOR__/$VENDOR/g > $COMMONBASE/Android.mk
