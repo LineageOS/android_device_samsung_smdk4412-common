@@ -71,7 +71,7 @@ for FILE in `cat $COMMONPROPS | grep -v ^# | grep -v ^$`; do
     if [ $COUNT = "0" ]; then
         LINEEND=""
     fi
-    echo "\t\$(LOCAL_PATH)/proprietary/$FILE:$FILE$LINEEND" >> $COMMONMAKEFILE
+    echo "    \$(LOCAL_PATH)/proprietary/$FILE:$FILE$LINEEND" >> $COMMONMAKEFILE
 done
 
 (cat << EOF) | sed s/__COMMON__/$COMMON/g | sed s/__VENDOR__/$VENDOR/g > $COMMONBASE/Android.mk
@@ -91,7 +91,7 @@ done
 
 LOCAL_PATH := \$(call my-dir)
 
-ifneq (\$(filter i9300 n7100 n8000 n8013,\$(TARGET_DEVICE)),)
+ifneq (\$(filter i9300 i9305 n7100 n8000 n8013 t0lte i605 l900 r950,\$(TARGET_DEVICE)),)
 
 include \$(CLEAR_VARS)
 LOCAL_MODULE := libTVOut
