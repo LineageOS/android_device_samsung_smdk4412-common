@@ -62,6 +62,9 @@ PRODUCT_PACKAGES += \\
     libsecion
 
 PRODUCT_COPY_FILES += \\
+    \$(LOCAL_PATH)/proprietary/sbin/cbd:root/sbin/cbd
+
+PRODUCT_COPY_FILES += \\
 EOF
 
 LINEEND=" \\"
