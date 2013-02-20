@@ -67,7 +67,7 @@ PRODUCT_PACKAGES := \
     audio.a2dp.default \
     audio.primary.smdk4x12 \
     audio.usb.default \
-    camera.exynos4 \
+    camera.smdk4x12 \
     Camera \
     com.android.future.usb.accessory \
     gralloc.exynos4 \
