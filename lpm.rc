@@ -1,3 +1,5 @@
+import lpm.fs.rc
+
 on early-init
     start ueventd
 
@@ -19,16 +21,7 @@ on init
     mkdir /tmp
     mkdir /dbdata
     mkdir /mnt 0775 root root
-    #mount /tmp /tmp tmpfs   
-
-on early-fs
-    mount ext4 /dev/block/mmcblk0p9 /system ro wait noatime
-    mount ext4 /dev/block/mmcblk0p12 /data wait nosuid nodev noatime discard,noauto_da_alloc,journal_async_commit
-
-	mkdir /data/log 0777
-	chmod 0666 /dev/log/radio
-	chmod 0666 /dev/log/main
-	chmod 0666 /dev/log/event    
+    #mount /tmp /tmp tmpfs     
 
 on boot
 #	write /sys/class/sec/switch/usb_sel PDA
