@@ -70,7 +70,6 @@ TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_EGL_CFG := device/samsung/smdk4412-common/configs/egl.cfg
 USE_OPENGL_RENDERER := true
 BOARD_USES_SKIAHWJPEG := true
-BOARD_EGL_NEEDS_LEGACY_FB := true
 COMMON_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D
 
 # Enable WEBGL in WebKit
