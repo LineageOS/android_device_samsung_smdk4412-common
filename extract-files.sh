@@ -58,8 +58,7 @@ LOCAL_PATH := vendor/samsung/smdk4412-common
 PRODUCT_PACKAGES += \\
     libTVOut \\
     libUMP \\
-    libfimc \\
-    libsecion
+    libfimc
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/sbin/cbd:root/sbin/cbd
@@ -120,16 +119,6 @@ include \$(CLEAR_VARS)
 LOCAL_MODULE := libfimc
 LOCAL_MODULE_OWNER := samsung
 LOCAL_SRC_FILES := system/lib/libfimc.so
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_SUFFIX := .so
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-LOCAL_MODULE_PATH := \$(TARGET_OUT)/lib
-include \$(BUILD_PREBUILT)
-
-include \$(CLEAR_VARS)
-LOCAL_MODULE := libsecion
-LOCAL_MODULE_OWNER := samsung
-LOCAL_SRC_FILES := system/lib/libsecion.so
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES

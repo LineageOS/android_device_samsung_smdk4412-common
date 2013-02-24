@@ -69,6 +69,7 @@ PRODUCT_PACKAGES := \
     gralloc.exynos4 \
     hwcomposer.exynos4 \
     libnetcmdiface \
+    libsecion \
     libsync \
     lights.exynos4 \
     macloader \

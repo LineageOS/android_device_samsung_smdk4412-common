@@ -49,7 +49,6 @@ system/lib/libhdmiclient.so
 system/lib/libhwconverter.so
 system/lib/libhwjpeg.so
 system/lib/libquramimagecodec.so
-system/lib/libsecion.so
 system/lib/libsecnativefeature.so
 system/lib/libtvout_jni.so
 system/lib/libtvoutinterface.so
