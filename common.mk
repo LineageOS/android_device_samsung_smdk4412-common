@@ -65,6 +65,7 @@ PRODUCT_PACKAGES := \
     Camera \
     com.android.future.usb.accessory \
     libsync \
+    libsecion \
     lights.exynos4 \
     macloader \
     tinymix \

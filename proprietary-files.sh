@@ -69,7 +69,6 @@ adb pull /system/lib/libhdmi.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietar
 adb pull /system/lib/libhdmiclient.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libhdmiclient.so
 adb pull /system/lib/libhwconverter.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libhwconverter.so
 adb pull /system/lib/libhwjpeg.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libhwjpeg.so
-adb pull /system/lib/libsecion.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libsecion.so
 adb pull /system/lib/libquramimagecodec.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libquramimagecodec.so
 adb pull /system/lib/libsecnativefeature.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libsecnativefeature.so
 adb pull /system/lib/libtvout_jni.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/system/lib/libtvout_jni.so
@@ -146,8 +145,7 @@ LOCAL_PATH := vendor/samsung/smdk4412-common
 PRODUCT_PACKAGES += \\
     libTVOut \\
     libUMP \\
-    libfimc \\
-    libsecion
+    libfimc
 
 PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/sbin/cbd:root/sbin/cbd
@@ -192,7 +190,6 @@ PRODUCT_COPY_FILES += \\
     \$(LOCAL_PATH)/proprietary/system/lib/hw/hwcomposer.smdk4x12.so:system/lib/hw/hwcomposer.smdk4x12.so
 
 PRODUCT_COPY_FILES += \\
-    \$(LOCAL_PATH)/proprietary/system/lib/libsecion.so:system/lib/libsecion.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libMali.so:system/lib/libMali.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libMcClient.so:system/lib/libMcClient.so \\
     \$(LOCAL_PATH)/proprietary/system/lib/libMcRegistry.so:system/lib/libMcRegistry.so \\
@@ -319,16 +316,6 @@ include \$(CLEAR_VARS)
 LOCAL_MODULE := libfimc
 LOCAL_MODULE_OWNER := samsung
 LOCAL_SRC_FILES := system/lib/libfimc.so
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_SUFFIX := .so
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-LOCAL_MODULE_PATH := \$(TARGET_OUT)/lib
-include \$(BUILD_PREBUILT)
-
-include \$(CLEAR_VARS)
-LOCAL_MODULE := libsecion
-LOCAL_MODULE_OWNER := samsung
-LOCAL_SRC_FILES := system/lib/libsecion.so
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
