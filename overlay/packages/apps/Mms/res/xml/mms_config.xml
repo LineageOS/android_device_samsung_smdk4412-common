@@ -32,4 +32,19 @@
     <!-- Maximum width for an attached image -->
     <int name="maxImageWidth">1600</int>
 
+    <!-- User-Agent parameter used in MMS http request -->
+    <string name="userAgent">SAMSUNG-GT-I9300-Mms</string>
+
+    <!-- If true, The text message over 160 characters will be sent in multi part.
+         If false, The text message over 160 characters will be sent
+         via multi media message. -->
+    <bool name="enableMultipartSMS">true</bool>
+
+    <!-- If true, the text message will be split every 160 characters.
+         If false, the text will never be split before being sent. -->
+    <bool name="enableSplitSMS">false</bool>
+
+    <!-- UAProf URL -->
+    <string name="uaProfUrl">http://wap.samsungmobile.com/uaprof/GT-I9300.xml</string>
+
 </mms_config>
