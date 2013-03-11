@@ -24,6 +24,8 @@
     <bool name="needsSamsungCamMode">true</bool>
     <!-- Samsung Camera Settings -->
     <bool name="hasSamsungCamSettings">true</bool>
+    <!-- Force use of profile video size -->
+    <bool name="useProfileVideoSize">true</bool>
     <!-- Use ZSL mode -->
     <bool name="enableZSL">true</bool>
     <!-- The camera HAL does its own preview state management during snaps -->
