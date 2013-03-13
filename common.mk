@@ -38,6 +38,10 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/audio_effects.conf:system/etc/audio_effects.conf \
     $(COMMON_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf
 
+# Camera FW
+PRODUCT_COPY_FILES += \
+    $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
+
 # Vold and Storage
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/vold.fstab:system/etc/vold.fstab
