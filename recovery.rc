@@ -9,6 +9,7 @@ on init
 
     mkdir /sdcard
     mkdir /extSdCard
+    mkdir /external_sd
     mkdir /system
     mkdir /data
     mkdir /cache
