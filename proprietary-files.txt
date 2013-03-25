@@ -81,6 +81,7 @@ system/usr/idc/melfas_ts.idc
 system/usr/idc/sec_touchscreen.idc
 system/usr/keylayout/gpio-keys.kl
 system/usr/keylayout/sii9234_rcp.kl
+system/vendor/firmware/SlimISP_BH.bin
 system/vendor/firmware/SlimISP_GD.bin
 system/vendor/firmware/SlimISP_GH.bin
 system/vendor/firmware/SlimISP_GK.bin
