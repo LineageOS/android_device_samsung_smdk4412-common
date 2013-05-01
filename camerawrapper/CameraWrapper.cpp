@@ -100,6 +100,7 @@ static char * camera_fixup_getparams(int id, const char * settings)
 
     // fix params here
     params.set(android::CameraParameters::KEY_SUPPORTED_ISO_MODES, iso_values[id]);
+    params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
 
     android::String8 strParams = params.flatten();
     char *ret = strdup(strParams.string());
@@ -125,6 +126,8 @@ char * camera_fixup_setparams(int id, const char * settings)
         else if(strcmp(isoMode, "ISO800") == 0)
             params.set(android::CameraParameters::KEY_ISO_MODE, "800");
     }
+    //Workaround for crash when touch to focus is used with flash on.
+    params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
 
 #ifdef CAMERA_WITH_CITYID_PARAM
     params.set(android::CameraParameters::KEY_CITYID, 0);
