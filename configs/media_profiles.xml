@@ -151,7 +151,7 @@
       <Audio codec="aac"
              bitRate="196000"
              sampleRate="48000"
-             channels="2" />
+             channels="1" />
     </EncoderProfile>
 
     <EncoderProfile quality="timelapselow" fileFormat="3gp" duration="30">
