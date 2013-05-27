@@ -411,10 +411,11 @@ int camera_send_command(struct camera_device * device,
     if(!device)
         return -EINVAL;
 
-    /* send_command causes the camera hal do to unexpected things like lockups.
-     * don't pass any command to the vendor hal to prevent this */
-    return 0;
-    //return VENDOR_CALL(device, send_command, cmd, arg1, arg2);
+    // 1271-1273 = HDR
+    if (cmd == 1271 || cmd == 1272 || cmd == 1273)
+        return VENDOR_CALL(device, send_command, cmd, arg1, arg2);
+    else
+        return 0;
 }
 
 void camera_release(struct camera_device * device)
