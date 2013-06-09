@@ -71,4 +71,15 @@
                 android:defaultValue="3" />
     </PreferenceCategory>
 
+    <!-- S-Pen -->
+    <PreferenceCategory
+            android:key="category_spen"
+            android:title="@string/spen_subcat_title">
+        <!-- S-Pen power saving mode -->
+        <com.cyanogenmod.settings.device.SPenPowerSavingMode
+                android:key="spen_power_save"
+                android:title="@string/spen_power_save_title_head"
+                android:summary="@string/spen_power_save_summary_head" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

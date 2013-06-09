@@ -17,12 +17,14 @@
 package com.cyanogenmod.settings.device;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
@@ -40,6 +42,8 @@ public class ScreenFragmentActivity extends PreferenceFragment {
     private mDNIeNegative mmDNIeNegative;
     private LedFade mLedFade;
 
+    private static boolean sSPenSupported;
+
     private static final String FILE_TOUCHKEY_BRIGHTNESS = "/sys/class/sec/sec_touchkey/brightness";
     private static final String FILE_TOUCHKEY_DISABLE = "/sys/class/sec/sec_touchkey/force_disable";
 
@@ -48,11 +52,14 @@ public class ScreenFragmentActivity extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.screen_preferences);
-        PreferenceScreen prefSet = getPreferenceScreen();
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        Resources res = getResources();
 
+        /* CABC */
         mCABC = (CABC) findPreference(DeviceSettings.KEY_CABC);
         mCABC.setEnabled(CABC.isSupported());
 
+        /* mDNIe */
         mmDNIeScenario = (mDNIeScenario) findPreference(DeviceSettings.KEY_MDNIE_SCENARIO);
         mmDNIeScenario.setEnabled(mDNIeScenario.isSupported());
 
@@ -62,13 +69,24 @@ public class ScreenFragmentActivity extends PreferenceFragment {
         mmDNIeNegative = (mDNIeNegative) findPreference(DeviceSettings.KEY_MDNIE_NEGATIVE);
         mmDNIeNegative.setEnabled(mDNIeNegative.isSupported());
 
+        /* LED */
         mLedFade = (LedFade) findPreference(DeviceSettings.KEY_LED_FADE);
         mLedFade.setEnabled(LedFade.isSupported());
 
-        if (((CheckBoxPreference)prefSet.findPreference(DeviceSettings.KEY_TOUCHKEY_LIGHT)).isChecked()) {
-            prefSet.findPreference(DeviceSettings.KEY_TOUCHKEY_TIMEOUT).setEnabled(true);
+        /* Touchkey */
+        if (((CheckBoxPreference)preferenceScreen.findPreference(DeviceSettings.KEY_TOUCHKEY_LIGHT)).isChecked()) {
+            preferenceScreen.findPreference(DeviceSettings.KEY_TOUCHKEY_TIMEOUT).setEnabled(true);
         } else {
-            prefSet.findPreference(DeviceSettings.KEY_TOUCHKEY_TIMEOUT).setEnabled(false);
+            preferenceScreen.findPreference(DeviceSettings.KEY_TOUCHKEY_TIMEOUT).setEnabled(false);
+        }
+
+        /* S-Pen */
+        String spenFilePath = res.getString(R.string.spen_sysfs_file);
+        sSPenSupported = SPenPowerSavingMode.isSupported(spenFilePath);
+
+        PreferenceCategory spenCategory = (PreferenceCategory) findPreference(DeviceSettings.KEY_CATEGORY_SPEN);
+        if (!sSPenSupported) {
+            preferenceScreen.removePreference(spenCategory);
         }
     }
 

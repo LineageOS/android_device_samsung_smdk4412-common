@@ -53,4 +53,9 @@
     <string name="use_dock_audio_title_head">Use Dock USB Audio</string>
     <string name="use_dock_audio_summary_head">Use the passive audio out on the dock</string>
 
+    <!-- S-Pen -->
+    <string name="spen_subcat_title">S-Pen</string>
+    <string name="spen_power_save_title_head">Power saving mode</string>
+    <string name="spen_power_save_summary_head">Disable stylus digitizer when S-Pen is in device</string>
+
 </resources>
