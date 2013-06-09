@@ -26,4 +26,8 @@
     <string name="intensity_default_value">50</string>
     <string name="intensity_min_value">0</string>
 
+    <!-- S-Pen -->
+    <string name="spen_sysfs_file">"/sys/class/sec/sec_epen"</string>
+    <string name="spen_powersaving_sysfs_file">"/sys/class/sec/sec_epen/epen_saving_mode"</string>
+
 </resources>
