@@ -23,4 +23,25 @@
                 android:summary="@string/use_dock_audio_summary_head"
                 />
     </PreferenceCategory>
+
+    <PreferenceCategory
+                android:title="@string/incallaudio_subcat_title">
+
+    <com.cyanogenmod.settings.device.IncallAudio
+            android:key="incall_tuning"
+            android:title="@string/incallaudio_subcat_title"
+            android:dialogTitle="@string/incallaudio_subcat_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+                android:title="@string/audioout_subcat_title">
+
+    <com.cyanogenmod.settings.device.AudioOut
+            android:key="audioout_tuning"
+            android:title="@string/audioout_subcat_title"
+            android:dialogTitle="@string/audioout_subcat_title" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

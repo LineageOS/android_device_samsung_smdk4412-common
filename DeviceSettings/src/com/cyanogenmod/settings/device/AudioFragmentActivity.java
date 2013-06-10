@@ -19,6 +19,7 @@ package com.cyanogenmod.settings.device;
 import android.app.ActivityManagerNative;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.UserHandle;
@@ -32,17 +33,45 @@ import android.util.Log;
 
 import com.cyanogenmod.settings.device.R;
 
-public class DockFragmentActivity extends PreferenceFragment {
+public class AudioFragmentActivity extends PreferenceFragment {
 
     private static final String PREF_ENABLED = "1";
-    private static final String TAG = "DeviceSettings_Dock";
+    private static final String TAG = "DeviceSettings_Audio";
+    public static final String KEY_INCALL_TUNING = "incall_tuning";
+    public static final String KEY_AUDIOOUT_TUNING = "audioout_tuning";
+
+    private static boolean sIncallTuning;
+    private static boolean sAudioOutTuning;
+    private IncallAudio mIncallTuning;
+    private AudioOut mAudioOutTuning;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.dock_preferences);
+        addPreferencesFromResource(R.xml.audio_preferences);
         PreferenceScreen prefSet = getPreferenceScreen();
+
+        Resources res = getResources();
+        sIncallTuning = res.getBoolean(R.bool.has_incall_audio_tuning);
+        sAudioOutTuning = res.getBoolean(R.bool.has_output_audio_tuning);
+
+        if(sIncallTuning){
+             mIncallTuning = (IncallAudio) findPreference(KEY_INCALL_TUNING);
+             if(mIncallTuning.isSupported("earpiece") || mIncallTuning.isSupported("headphone") ||
+               mIncallTuning.isSupported("speaker") || mIncallTuning.isSupported("bt"))
+                  mIncallTuning.setEnabled(true);
+             else
+                  mIncallTuning.setEnabled(false);
+        }
+
+        if(sAudioOutTuning){
+             mAudioOutTuning = (AudioOut) findPreference(KEY_AUDIOOUT_TUNING);
+             if(mAudioOutTuning.isSupported("headphone") || mAudioOutTuning.isSupported("speaker"))
+                 mAudioOutTuning.setEnabled(true);
+             else
+                 mAudioOutTuning.setEnabled(false);
+        }
     }
 
     @Override
