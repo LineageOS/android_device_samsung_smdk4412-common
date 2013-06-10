@@ -24,18 +24,20 @@ public class Startup extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent bootintent) {
-        DockFragmentActivity.restore(context);
+        AudioFragmentActivity.restore(context);
+        AudioOut.restore(context);
+        CABC.restore(context);
         HapticFragmentActivity.restore(context);
         Hspa.restore(context);
-        RadioFragmentActivity.restore(context);
-        ScreenFragmentActivity.restore(context);
-        CABC.restore(context);
+        IncallAudio.restore(context);
+        LedFade.restore(context);
         mDNIeScenario.restore(context);
         mDNIeMode.restore(context);
         mDNIeNegative.restore(context);
-        LedFade.restore(context);
+        RadioFragmentActivity.restore(context);
+        ScreenFragmentActivity.restore(context);
+        SPenPowerSavingMode.restore(context);
         TouchkeyTimeout.restore(context);
         VibratorTuningPreference.restore(context);
-        SPenPowerSavingMode.restore(context);
     }
 }
