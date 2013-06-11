@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "iCOrf4s",
+        "filename": "DeviceSettings/res/values-hu/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5393
+      },
+      "writtenOn": "2013-06-11T13:57:10Z",
+      "side": 1,
+      "message": "...ha S-Pen az eszköz",
+      "revId": "18d42fc2a596f1d6754541219c15616ff4757109",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
