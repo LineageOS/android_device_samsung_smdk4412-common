@@ -44,4 +44,10 @@
     <string name="dockaudio_subcat_title">Áudio do dock</string>
     <string name="use_dock_audio_title_head">Usar áudio USB do dock</string>
     <string name="use_dock_audio_summary_head">Usar a saída de áudio passiva no dock</string>
+    <string name="cabc_summary_head">Ativar controle de luz de fundo adaptivo ao conteúdo</string>
+    <string name="cabc_title_head">CLAC</string>
+    <string name="defaults_button">Restaurar para o padrão</string>
+    <string name="spen_subcat_title">S-Pen</string>
+    <string name="spen_power_save_title_head">Modo de economia de energia</string>
+    <string name="spen_power_save_summary_head">Desativar digitalizador stylus quando o S-Pen estiver dentro do dispositivo</string>
 </resources>
