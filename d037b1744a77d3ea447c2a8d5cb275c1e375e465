@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "iLDQ7FQ",
+        "filename": "DeviceSettings/res/values-nl/arrays.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2881
+      },
+      "writtenOn": "2013-06-20T16:50:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "iJl3XgI",
+      "revId": "d037b1744a77d3ea447c2a8d5cb275c1e375e465",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "iHl0ivw",
         "filename": "DeviceSettings/res/values-nl/strings.xml",
         "patchSetId": 1
@@ -70,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "iJDV6EQ",
+        "filename": "DeviceSettings/res/values-nl/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2881
+      },
+      "writtenOn": "2013-06-20T16:50:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "iLlqIhk",
+      "revId": "d037b1744a77d3ea447c2a8d5cb275c1e375e465",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "iJCHKGE",
         "filename": "DeviceSettings/res/values-nl/strings.xml",
         "patchSetId": 1
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "iBDbGH4",
+        "filename": "DeviceSettings/res/values-nl/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2881
+      },
+      "writtenOn": "2013-06-20T16:50:33Z",
+      "side": 1,
+      "message": "Zullen we de de afkorting CABC er anders ook bij laten staan? Zo heet deze string in het Engels.\nAls je dan wil weten wat dit is, kan je er tenmminste op googelen.\n\n- Inhoud (CABC)",
+      "parentUuid": "iJCHKGE",
+      "revId": "d037b1744a77d3ea447c2a8d5cb275c1e375e465",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "iHB8lHI",
         "filename": "DeviceSettings/res/values-nl/strings.xml",
         "patchSetId": 1
@@ -98,6 +152,24 @@
       "writtenOn": "2013-06-20T16:36:58Z",
       "side": 1,
       "message": "\u0027inschakelen\u0027 misschien weg",
+      "revId": "d037b1744a77d3ea447c2a8d5cb275c1e375e465",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iPDnhD4",
+        "filename": "DeviceSettings/res/values-nl/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2881
+      },
+      "writtenOn": "2013-06-20T16:50:33Z",
+      "side": 1,
+      "message": "Alle andere summaries hier hebben dit er wel bij. (instellen -- in-/uitschakelen -- gebruiken)",
+      "parentUuid": "iHB8lHI",
       "revId": "d037b1744a77d3ea447c2a8d5cb275c1e375e465",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
