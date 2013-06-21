@@ -61,11 +61,21 @@
     <string name="hspa_title_head">HSPA</string>
     <string name="hspa_summary_head">Enable HSDPA/HSUPA</string>
 
-    <!-- Dock Preference -->
-    <string name="category_dock_title">Dock</string>
-    <string name="dockaudio_subcat_title">Audio</string>
-    <string name="use_dock_audio_title_head">Use Dock USB Audio</string>
+    <!-- Audio Preference -->
+    <string name="category_audio_title">Audio</string>
+    <string name="dockaudio_subcat_title">Dock audio</string>
+    <string name="use_dock_audio_title_head">Use USB Dock Audio</string>
     <string name="use_dock_audio_summary_head">Use the passive audio out on the dock</string>
+    <string name="incallaudio_subcat_title">In-call audio volumes</string>
+    <string name="incall_earpiece_audio_title_head">Earpiece</string>
+    <string name="incall_headphone_audio_title_head">Headphone</string>
+    <string name="incall_speaker_audio_title_head">Speaker</string>
+    <string name="incall_bt_audio_title_head">BT</string>
+    <string name="incall_warning">Values higher than %1$d are not recommended</string>
+    <string name="audioout_subcat_title">Streaming audio volumes</string>
+    <string name="audioout_headphone_audio_title_head">Headphone</string>
+    <string name="audioout_speaker_audio_title_head">Speaker</string>
+    <string name="audioout_warning">Values higher than %1$d are not recommended</string>
 
     <!-- S-Pen -->
     <string name="spen_subcat_title">S-Pen</string>

@@ -46,7 +46,7 @@ public class DeviceSettings extends FragmentActivity {
     public static final String KEY_HSPA = "hspa";
     public static final String KEY_USE_DOCK_AUDIO = "dock_audio";
     public static final String KEY_CATEGORY_SPEN = "category_spen";
-    public static final String KEY_SPEN_POWER_SAVING_MODE = "spen_power_saving"; 
+    public static final String KEY_SPEN_POWER_SAVING_MODE = "spen_power_saving";
 
     ViewPager mViewPager;
     TabsAdapter mTabsAdapter;
@@ -72,8 +72,8 @@ public class DeviceSettings extends FragmentActivity {
                 ScreenFragmentActivity.class, null);
         mTabsAdapter.addTab(bar.newTab().setText(R.string.category_haptic_title),
                 HapticFragmentActivity.class, null);
-        mTabsAdapter.addTab(bar.newTab().setText(R.string.category_dock_title),
-                DockFragmentActivity.class, null);
+        mTabsAdapter.addTab(bar.newTab().setText(R.string.category_audio_title),
+                AudioFragmentActivity.class, null);
 
         if (savedInstanceState != null) {
             bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));

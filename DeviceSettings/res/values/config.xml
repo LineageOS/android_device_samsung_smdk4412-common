@@ -30,4 +30,17 @@
     <string name="spen_sysfs_file">"/sys/class/sec/sec_epen"</string>
     <string name="spen_powersaving_sysfs_file">"/sys/class/sec/sec_epen/epen_saving_mode"</string>
 
+    <!-- Audio Tuning -->
+    <bool name="has_incall_audio_tuning">false</bool>
+    <bool name="has_output_audio_tuning">false</bool>
+
+    <string name="incall_max_value">10</string>
+    <string name="incall_warning_threshold">9</string>
+    <string name="incall_default_value">5</string>
+    <string name="incall_min_value">1</string>
+    <string name="audioout_max_value">63</string>
+    <string name="audioout_warning_threshold">60</string>
+    <string name="audioout_default_value">0</string>
+    <string name="audioout_min_value">0</string>
+
 </resources>
