@@ -4,6 +4,13 @@
     <!-- Screen -->
     <PreferenceCategory
             android:title="@string/screen_colors_title">
+        <!-- Backlight autobrightness -->
+        <com.cyanogenmod.settings.device.BlAutoBrightness
+                android:key="bl_auto_brightness"
+                android:title="@string/bl_auto_brightness_title_head"
+                android:summary="@string/bl_auto_brightness_summary_head"
+                android:defaultValue="false" />
+
         <!-- CABC -->
         <com.cyanogenmod.settings.device.CABC
                 android:key="cabc"

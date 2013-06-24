@@ -36,6 +36,7 @@ public class ScreenFragmentActivity extends PreferenceFragment {
 
     private static final String PREF_ENABLED = "1";
     private static final String TAG = "DeviceSettings_Screen";
+    private BlAutoBrightness mBlAutoBrightness;
     private CABC mCABC;
     private mDNIeScenario mmDNIeScenario;
     private mDNIeMode mmDNIeMode;
@@ -54,6 +55,10 @@ public class ScreenFragmentActivity extends PreferenceFragment {
         addPreferencesFromResource(R.xml.screen_preferences);
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         Resources res = getResources();
+
+        /* Backlight autobrightness */
+        mBlAutoBrightness = (BlAutoBrightness) findPreference(DeviceSettings.KEY_BL_AUTO_BRIGHTNESS);
+        mBlAutoBrightness.setEnabled(mBlAutoBrightness.isSupported());
 
         /* CABC */
         mCABC = (CABC) findPreference(DeviceSettings.KEY_CABC);
