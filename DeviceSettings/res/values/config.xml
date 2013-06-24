@@ -20,27 +20,27 @@
 
     <!-- Vibrator Tuning -->
     <bool name="has_vibrator_tuning">true</bool>
-    <string name="vibrator_sysfs_file">"/sys/vibrator/pwm_val"</string>
-    <string name="intensity_max_value">100</string>
-    <string name="intensity_warning_threshold">75</string>
-    <string name="intensity_default_value">50</string>
-    <string name="intensity_min_value">0</string>
+    <string name="vibrator_sysfs_file" translatable="false">"/sys/vibrator/pwm_val"</string>
+    <string name="intensity_max_value" translatable="false">100</string>
+    <string name="intensity_warning_threshold" translatable="false">75</string>
+    <string name="intensity_default_value" translatable="false">50</string>
+    <string name="intensity_min_value" translatable="false">0</string>
 
     <!-- S-Pen -->
-    <string name="spen_sysfs_file">"/sys/class/sec/sec_epen"</string>
-    <string name="spen_powersaving_sysfs_file">"/sys/class/sec/sec_epen/epen_saving_mode"</string>
+    <string name="spen_sysfs_file" translatable="false">"/sys/class/sec/sec_epen"</string>
+    <string name="spen_powersaving_sysfs_file" translatable="false">"/sys/class/sec/sec_epen/epen_saving_mode"</string>
 
     <!-- Audio Tuning -->
     <bool name="has_incall_audio_tuning">false</bool>
     <bool name="has_output_audio_tuning">false</bool>
 
-    <string name="incall_max_value">10</string>
-    <string name="incall_warning_threshold">9</string>
-    <string name="incall_default_value">5</string>
-    <string name="incall_min_value">1</string>
-    <string name="audioout_max_value">63</string>
-    <string name="audioout_warning_threshold">60</string>
-    <string name="audioout_default_value">0</string>
-    <string name="audioout_min_value">0</string>
+    <string name="incall_max_value" translatable="false">10</string>
+    <string name="incall_warning_threshold" translatable="false">9</string>
+    <string name="incall_default_value" translatable="false">5</string>
+    <string name="incall_min_value" translatable="false">1</string>
+    <string name="audioout_max_value" translatable="false">63</string>
+    <string name="audioout_warning_threshold" translatable="false">60</string>
+    <string name="audioout_default_value" translatable="false">0</string>
+    <string name="audioout_min_value" translatable="false">0</string>
 
 </resources>
