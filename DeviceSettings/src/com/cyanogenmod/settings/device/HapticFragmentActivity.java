@@ -36,6 +36,7 @@ public class HapticFragmentActivity extends PreferenceFragment {
     public static final String KEY_VIBRATOR_TUNING = "vibrator_tuning";
 
     private static boolean sVibratorTuning;
+    private static boolean mEnableVibratorTuning = false;
     private VibratorTuningPreference mVibratorTuning;
 
     @Override
@@ -47,11 +48,16 @@ public class HapticFragmentActivity extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.haptic_preferences);
 
+        mVibratorTuning = (VibratorTuningPreference) findPreference(KEY_VIBRATOR_TUNING);
+
         if (sVibratorTuning) {
             String vibratorFilePath = res.getString(R.string.vibrator_sysfs_file);
-            mVibratorTuning = (VibratorTuningPreference) findPreference(KEY_VIBRATOR_TUNING);
-            mVibratorTuning.setEnabled(VibratorTuningPreference.isSupported(vibratorFilePath));
+            if(VibratorTuningPreference.isSupported(vibratorFilePath)){
+                  mEnableVibratorTuning = true;
+            }
         }
+
+        mVibratorTuning.setEnabled(mEnableVibratorTuning);
     }
 
     @Override
