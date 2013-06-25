@@ -42,6 +42,8 @@ public class AudioFragmentActivity extends PreferenceFragment {
 
     private static boolean sIncallTuning;
     private static boolean sAudioOutTuning;
+    private static boolean mEnableIncall = false;
+    private static boolean mEnableAudioOut = false;
     private IncallAudio mIncallTuning;
     private AudioOut mAudioOutTuning;
 
@@ -56,22 +58,22 @@ public class AudioFragmentActivity extends PreferenceFragment {
         sIncallTuning = res.getBoolean(R.bool.has_incall_audio_tuning);
         sAudioOutTuning = res.getBoolean(R.bool.has_output_audio_tuning);
 
+        mIncallTuning = (IncallAudio) findPreference(KEY_INCALL_TUNING);
+        mAudioOutTuning = (AudioOut) findPreference(KEY_AUDIOOUT_TUNING);
+
         if(sIncallTuning){
-             mIncallTuning = (IncallAudio) findPreference(KEY_INCALL_TUNING);
              if(mIncallTuning.isSupported("earpiece") || mIncallTuning.isSupported("headphone") ||
                mIncallTuning.isSupported("speaker") || mIncallTuning.isSupported("bt"))
-                  mIncallTuning.setEnabled(true);
-             else
-                  mIncallTuning.setEnabled(false);
+                  mEnableIncall = true;
         }
 
         if(sAudioOutTuning){
-             mAudioOutTuning = (AudioOut) findPreference(KEY_AUDIOOUT_TUNING);
              if(mAudioOutTuning.isSupported("headphone") || mAudioOutTuning.isSupported("speaker"))
-                 mAudioOutTuning.setEnabled(true);
-             else
-                 mAudioOutTuning.setEnabled(false);
+                 mEnableAudioOut = true;
         }
+
+        mIncallTuning.setEnabled(mEnableIncall);
+        mAudioOutTuning.setEnabled(mEnableAudioOut);
     }
 
     @Override
