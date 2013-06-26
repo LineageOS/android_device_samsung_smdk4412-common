@@ -17,6 +17,7 @@
 package com.cyanogenmod.settings.device;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -35,6 +36,9 @@ public class RadioFragmentActivity extends PreferenceFragment {
     private static final String PREF_ENABLED = "1";
     private static final String TAG = "DeviceSettings_Radio";
 
+    private static boolean sHspa;
+    private Hspa mHspa;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +46,11 @@ public class RadioFragmentActivity extends PreferenceFragment {
         addPreferencesFromResource(R.xml.radio_preferences);
 
         PreferenceScreen prefSet = getPreferenceScreen();
+        Resources res = getResources();
+        sHspa = res.getBoolean(R.bool.has_hspa);
 
+        mHspa = (Hspa) findPreference(DeviceSettings.KEY_HSPA);
+        mHspa.setEnabled(sHspa);
     }
 
     @Override
