@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dac4157f_bf6d7fce",
+        "filename": "DeviceSettings/res/values-hu/strings.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5393
+      },
+      "writtenOn": "2013-06-26T11:08:05Z",
+      "side": 1,
+      "message": "hangerEje",
+      "revId": "d3734f52d16097b2926654350e4b5f3cb9bd310d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
