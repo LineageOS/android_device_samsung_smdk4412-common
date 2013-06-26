@@ -62,12 +62,14 @@ public class AudioFragmentActivity extends PreferenceFragment {
         mAudioOutTuning = (AudioOut) findPreference(KEY_AUDIOOUT_TUNING);
 
         if(sIncallTuning){
+             Log.w("AudioFragment", "Incall Audio is available");        
              if(mIncallTuning.isSupported("earpiece") || mIncallTuning.isSupported("headphone") ||
-               mIncallTuning.isSupported("speaker") || mIncallTuning.isSupported("bt"))
+               mIncallTuning.isSupported("speaker") || mIncallTuning.isSupported("bt"))                 
                   mEnableIncall = true;
-        }
+        }        
 
         if(sAudioOutTuning){
+             Log.w("AudioFragment", "Audio Out Tuning is available");
              if(mAudioOutTuning.isSupported("headphone") || mAudioOutTuning.isSupported("speaker"))
                  mEnableAudioOut = true;
         }
