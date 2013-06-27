@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dac4157f_8225c0c3",
+        "filename": "DeviceSettings/res/values-fr/strings.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 4617
+      },
+      "writtenOn": "2013-06-27T14:29:25Z",
+      "side": 1,
+      "message": "supérieures",
+      "revId": "71bc82366b0abd89a914387bc80e426fb395a650",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dac4157f_6222acbb",
+        "filename": "DeviceSettings/res/values-fr/strings.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 4617
+      },
+      "writtenOn": "2013-06-27T14:29:25Z",
+      "side": 1,
+      "message": "accueil",
+      "revId": "71bc82366b0abd89a914387bc80e426fb395a650",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dac4157f_422fa8a1",
+        "filename": "DeviceSettings/res/values-fr/strings.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4617
+      },
+      "writtenOn": "2013-06-27T14:29:25Z",
+      "side": 1,
+      "message": "Bluetooth ?",
+      "revId": "71bc82366b0abd89a914387bc80e426fb395a650",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
