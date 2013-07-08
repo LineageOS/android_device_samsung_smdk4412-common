@@ -169,8 +169,8 @@ public class AudioOut extends DialogPreference implements SeekBar.OnSeekBarChang
             editor.putString(AUDIOOUT_SPEAKER_FILE, String.valueOf(volumeSpeaker));
             editor.commit();
         } else {
-            Utils.writeValue(AUDIOOUT_HEADPHONE_FILE, String.valueOf(mHeadphoneOgPercent));
-            Utils.writeValue(AUDIOOUT_SPEAKER_FILE, String.valueOf(mSpeakerOgPercent));
+            Utils.writeValue(AUDIOOUT_HEADPHONE_FILE, String.valueOf(mHeadphoneOgValue));
+            Utils.writeValue(AUDIOOUT_SPEAKER_FILE, String.valueOf(mSpeakerOgValue));
         }
     }
 
@@ -243,7 +243,7 @@ public class AudioOut extends DialogPreference implements SeekBar.OnSeekBarChang
         double maxValue = MAX_VALUE;
         double minValue = MIN_VALUE;
 
-        double percent = (volume - minValue) * (100 / (maxValue - minValue));
+        double percent = Math.round((volume - minValue) * (100 / (maxValue - minValue)));
 
         if (percent > 100)
             percent = 100;
