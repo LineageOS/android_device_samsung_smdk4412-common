@@ -217,10 +217,10 @@ public class IncallAudio extends DialogPreference implements SeekBar.OnSeekBarCh
             editor.putString(INCALL_BT_FILE, String.valueOf(volumeBt));
             editor.commit();
         } else {
-            Utils.writeValue(INCALL_EARPIECE_FILE, String.valueOf(mEarpieceOgPercent));
-            Utils.writeValue(INCALL_HEADPHONE_FILE, String.valueOf(mHeadphoneOgPercent));
-            Utils.writeValue(INCALL_SPEAKER_FILE, String.valueOf(mSpeakerOgPercent));
-            Utils.writeValue(INCALL_BT_FILE, String.valueOf(mBtOgPercent));
+            Utils.writeValue(INCALL_EARPIECE_FILE, String.valueOf(mEarpieceOgValue));
+            Utils.writeValue(INCALL_HEADPHONE_FILE, String.valueOf(mHeadphoneOgValue));
+            Utils.writeValue(INCALL_SPEAKER_FILE, String.valueOf(mSpeakerOgValue));
+            Utils.writeValue(INCALL_BT_FILE, String.valueOf(mBtOgValue));
         }
     }
 
