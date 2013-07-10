@@ -44,6 +44,9 @@ static int camera_device_close(hw_device_t* device);
 static int camera_get_number_of_cameras(void);
 static int camera_get_camera_info(int camera_id, struct camera_info *info);
 
+char* camera_get_parameters(struct camera_device * device);
+int camera_set_parameters(struct camera_device * device, const char *params);
+
 static struct hw_module_methods_t camera_module_methods = {
         open: camera_device_open
 };
@@ -100,7 +103,6 @@ static char * camera_fixup_getparams(int id, const char * settings)
 
     // fix params here
     params.set(android::CameraParameters::KEY_SUPPORTED_ISO_MODES, iso_values[id]);
-    params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
 
     android::String8 strParams = params.flatten();
     char *ret = strdup(strParams.string());
@@ -126,8 +128,6 @@ char * camera_fixup_setparams(int id, const char * settings)
         else if(strcmp(isoMode, "ISO800") == 0)
             params.set(android::CameraParameters::KEY_ISO_MODE, "800");
     }
-    //Workaround for crash when touch to focus is used with flash on.
-    params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
 
 #ifdef CAMERA_WITH_CITYID_PARAM
     params.set(android::CameraParameters::KEY_CITYID, 0);
@@ -323,11 +323,42 @@ int camera_cancel_auto_focus(struct camera_device * device)
 
 int camera_take_picture(struct camera_device * device)
 {
+    android::CameraParameters params;
+    const char *AELock,*AWBLock;
+    char *par;
+    android::String8 strParams;
+    int params_changed = 0;
+
     ALOGV("%s", __FUNCTION__);
     ALOGV("%s->%08X->%08X", __FUNCTION__, (uintptr_t)device, (uintptr_t)(((wrapper_camera_device_t*)device)->vendor));
 
     if(!device)
         return -EINVAL;
+
+    // Remove AE and AWB locks before taking picture. This try to correct crash when touch to focus is used with flash on.
+    par = camera_get_parameters(device);
+    params.unflatten(android::String8(par));
+
+    AELock = params.get(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK);
+    AWBLock = params.get(android::CameraParameters::KEY_AUTO_WHITEBALANCE_LOCK);
+    ALOGV("%s AELock=%s AWBLock=%s", __FUNCTION__, AELock, AWBLock);
+
+    if ((AELock != NULL) && (strcmp(AELock,"true") == 0)) {
+        params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
+        ++params_changed;
+    }
+    if ((AWBLock != NULL) && (strcmp(AWBLock,"true") == 0)) {
+        params.set(android::CameraParameters::KEY_AUTO_WHITEBALANCE_LOCK, "false");
+        ++params_changed;
+    }
+
+    if (params_changed) {
+        strParams = params.flatten();
+        free(par);
+        par = strdup(strParams.string());
+
+        camera_set_parameters(device, par);
+    }
 
     // We safely avoid returning the exact result of VENDOR_CALL here. If ZSL
     // really bumps fast, take_picture will be called while a picture is already being
