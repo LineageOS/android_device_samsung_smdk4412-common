@@ -323,11 +323,11 @@ int camera_cancel_auto_focus(struct camera_device * device)
 
 int camera_take_picture(struct camera_device * device)
 {
-	android::CameraParameters params;
-	const char *AELock,*AWBLock;
-	char *par;
-	android::String8 strParams;
-	int params_changed = 0;
+    android::CameraParameters params;
+    const char *AELock,*AWBLock;
+    char *par;
+    android::String8 strParams;
+    int params_changed = 0;
 
     ALOGV("%s", __FUNCTION__);
     ALOGV("%s->%08X->%08X", __FUNCTION__, (uintptr_t)device, (uintptr_t)(((wrapper_camera_device_t*)device)->vendor));
