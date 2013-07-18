@@ -22,7 +22,7 @@
 */
 
 
-#define LOG_NDEBUG 0
+#define LOG_NDEBUG 1
 //#define LOG_PARAMETERS
 
 #define LOG_TAG "CameraWrapper"
@@ -223,6 +223,9 @@ void camera_stop_preview(struct camera_device * device)
     if(!device)
         return;
 
+    // Workaround for camera freezes
+    VENDOR_CALL(device, send_command, 7, 0, 0);
+
     VENDOR_CALL(device, stop_preview);
 }
 
@@ -314,11 +317,7 @@ int camera_cancel_auto_focus(struct camera_device * device)
     if(!device)
         return -EINVAL;
 
-    // Samsung camera HAL restarts focus (CAF_RESTART) when we cancel auto focus.
-    // Cancel auto focus is called just before pic is taken in autofocus mode, thus
-    // the HAL crashes.
-    return 0;
-    //return VENDOR_CALL(device, cancel_auto_focus);
+    return VENDOR_CALL(device, cancel_auto_focus);
 }
 
 int camera_take_picture(struct camera_device * device)
@@ -329,13 +328,7 @@ int camera_take_picture(struct camera_device * device)
     if(!device)
         return -EINVAL;
 
-    // We safely avoid returning the exact result of VENDOR_CALL here. If ZSL
-    // really bumps fast, take_picture will be called while a picture is already being
-    // taken, leading to "picture already running" error, crashing Gallery app. Afaik,
-    // there is no issue doing 0 (error appears in logcat anyway if needed).
-    VENDOR_CALL(device, take_picture);
-
-    return 0;
+    return VENDOR_CALL(device, take_picture);
 }
 
 int camera_cancel_picture(struct camera_device * device)
@@ -411,10 +404,7 @@ int camera_send_command(struct camera_device * device,
     if(!device)
         return -EINVAL;
 
-    /* send_command causes the camera hal do to unexpected things like lockups.
-     * don't pass any command to the vendor hal to prevent this */
-    return 0;
-    //return VENDOR_CALL(device, send_command, cmd, arg1, arg2);
+    return VENDOR_CALL(device, send_command, cmd, arg1, arg2);
 }
 
 void camera_release(struct camera_device * device)
