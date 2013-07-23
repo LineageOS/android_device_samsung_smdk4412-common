@@ -26,12 +26,13 @@ import android.util.AttributeSet;
 
 public class CABC extends CheckBoxPreference implements OnPreferenceChangeListener {
 
+    private static String FILE = null;
+
     public CABC(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnPreferenceChangeListener(this);
-    }
-
-    private static final String FILE = "/sys/class/lcd/panel/power_reduce";
+        FILE = context.getResources().getString(R.string.mdnie_cabc_sysfs_file);
+    }    
 
     public static boolean isSupported() {
         return Utils.fileExists(FILE);

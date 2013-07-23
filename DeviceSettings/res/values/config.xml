@@ -34,8 +34,8 @@
     <bool name="has_incall_audio_tuning">false</bool>
     <bool name="has_output_audio_tuning">false</bool>
 
-    <string name="incall_max_value" translatable="false">10</string>
-    <string name="incall_warning_threshold" translatable="false">9</string>
+    <string name="incall_max_value" translatable="false">9</string>
+    <string name="incall_warning_threshold" translatable="false">8</string>
     <string name="incall_default_value" translatable="false">5</string>
     <string name="incall_min_value" translatable="false">1</string>
     <string name="audioout_max_value" translatable="false">63</string>
@@ -48,5 +48,11 @@
 
     <!-- Touchkey -->
     <bool name="has_touchkey">true</bool>
+    
+    <!-- MDNIE -->
+    <string name="mdnie_cabc_sysfs_file" translatable="false">"/sys/class/lcd/panel/power_reduce"</string>
+    <string name="mdnie_scenario_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/scenario"</string>
+    <string name="mdnie_mode_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/mode"</string>
+    <string name="mdnie_negative_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/negative"</string>
 
 </resources>
