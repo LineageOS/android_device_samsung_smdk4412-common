@@ -60,17 +60,17 @@ public class ScreenFragmentActivity extends PreferenceFragment {
 
         /* CABC */
         mCABC = (CABC) findPreference(DeviceSettings.KEY_CABC);
-        mCABC.setEnabled(CABC.isSupported());
+        mCABC.setEnabled(CABC.isSupported(res.getString(R.string.mdnie_cabc_sysfs_file)));
 
         /* mDNIe */
         mmDNIeScenario = (mDNIeScenario) findPreference(DeviceSettings.KEY_MDNIE_SCENARIO);
-        mmDNIeScenario.setEnabled(mDNIeScenario.isSupported());
+        mmDNIeScenario.setEnabled(mDNIeScenario.isSupported(res.getString(R.string.mdnie_scenario_sysfs_file)));
 
         mmDNIeMode = (mDNIeMode) findPreference(DeviceSettings.KEY_MDNIE_MODE);
-        mmDNIeMode.setEnabled(mDNIeMode.isSupported());
+        mmDNIeMode.setEnabled(mDNIeMode.isSupported(res.getString(R.string.mdnie_mode_sysfs_file)));
 
         mmDNIeNegative = (mDNIeNegative) findPreference(DeviceSettings.KEY_MDNIE_NEGATIVE);
-        mmDNIeNegative.setEnabled(mDNIeNegative.isSupported());
+        mmDNIeNegative.setEnabled(mDNIeNegative.isSupported(res.getString(R.string.mdnie_negative_sysfs_file)));
 
         /* LED */
         mLedFade = (LedFade) findPreference(DeviceSettings.KEY_LED_FADE);
