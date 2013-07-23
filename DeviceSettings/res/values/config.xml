@@ -49,4 +49,10 @@
     <!-- Touchkey -->
     <bool name="has_touchkey">true</bool>
 
+    <!-- MDNIE -->
+    <string name="mdnie_cabc_sysfs_file" translatable="false">"/sys/class/lcd/panel/power_reduce"</string>
+    <string name="mdnie_scenario_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/scenario"</string>
+    <string name="mdnie_mode_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/mode"</string>
+    <string name="mdnie_negative_sysfs_file" translatable="false">"/sys/class/mdnie/mdnie/negative"</string>
+
 </resources>

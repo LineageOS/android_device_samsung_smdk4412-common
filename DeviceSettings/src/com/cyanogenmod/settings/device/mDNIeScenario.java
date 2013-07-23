@@ -27,12 +27,13 @@ import android.preference.PreferenceManager;
 
 public class mDNIeScenario extends ListPreference implements OnPreferenceChangeListener {
 
+    private static String FILE = null;
+
     public mDNIeScenario(Context context, AttributeSet attrs) {
         super(context,attrs);
         this.setOnPreferenceChangeListener(this);
+        FILE = context.getResources().getString(R.string.mdnie_scenario_sysfs_file);
     }
-
-    private static final String FILE = "/sys/class/mdnie/mdnie/scenario";
 
     public static boolean isSupported() {
         return Utils.fileExists(FILE);
