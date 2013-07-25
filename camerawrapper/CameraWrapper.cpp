@@ -225,6 +225,7 @@ void camera_stop_preview(struct camera_device * device)
 
     // Workaround for camera freezes
     VENDOR_CALL(device, send_command, 7, 0, 0);
+    VENDOR_CALL(device, cancel_auto_focus);
 
     VENDOR_CALL(device, stop_preview);
 }
