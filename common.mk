@@ -44,7 +44,7 @@ PRODUCT_COPY_FILES += \
 
 # Vold and Storage
 PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/vold.fstab:system/etc/vold.fstab
+    $(COMMON_PATH)/configs/fstab.smdk4412:system/etc/fstab.smdk4412
 
 # Bluetooth configuration files
 PRODUCT_COPY_FILES += \
