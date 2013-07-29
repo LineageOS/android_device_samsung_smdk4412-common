@@ -27,11 +27,11 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 # Init files
 PRODUCT_COPY_FILES := \
-    $(COMMON_PATH)/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
-    $(COMMON_PATH)/lpm.rc:root/lpm.rc \
-    $(COMMON_PATH)/init.trace.rc:root/init.trace.rc \
-    $(COMMON_PATH)/ueventd.smdk4x12.rc:root/ueventd.smdk4x12.rc \
-    $(COMMON_PATH)/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
+    $(COMMON_PATH)/rootdir/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
+    $(COMMON_PATH)/rootdir/lpm.rc:root/lpm.rc \
+    $(COMMON_PATH)/rootdir/init.trace.rc:root/init.trace.rc \
+    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:root/ueventd.smdk4x12.rc \
+    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -41,10 +41,6 @@ PRODUCT_COPY_FILES += \
 # Camera FW
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
-
-# Vold and Storage
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/vold.fstab:system/etc/vold.fstab
 
 # Bluetooth configuration files
 PRODUCT_COPY_FILES += \

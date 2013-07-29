@@ -52,7 +52,6 @@ TARGET_NO_RADIOIMAGE := true
 
 TARGET_PROVIDES_INIT := true
 TARGET_PROVIDES_INIT_TARGET_RC := true
-TARGET_RECOVERY_INITRC := device/samsung/smdk4412-common/recovery.rc
 
 TARGET_SPECIFIC_HEADER_PATH := device/samsung/smdk4412-common/overlay/include
 
