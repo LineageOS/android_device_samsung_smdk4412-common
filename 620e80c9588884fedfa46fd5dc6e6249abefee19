@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_5cad5130",
+        "filename": "configs/fstab.smdk4412",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 523
+      },
+      "writtenOn": "2013-07-30T17:17:12Z",
+      "side": 1,
+      "message": "BLAME PLODY\n\nvoldmanaged:usbdisk0:auto  \u003d\u003e voldmanaged\u003dusbdisk0:auto",
+      "revId": "620e80c9588884fedfa46fd5dc6e6249abefee19",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
