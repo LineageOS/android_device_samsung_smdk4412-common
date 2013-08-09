@@ -27,7 +27,6 @@ public class Startup extends BroadcastReceiver {
         AudioFragmentActivity.restore(context);
         AudioOut.restore(context);
         CABC.restore(context);
-        HapticFragmentActivity.restore(context);
         Hspa.restore(context);
         IncallAudio.restore(context);
         LedFade.restore(context);
@@ -38,6 +37,5 @@ public class Startup extends BroadcastReceiver {
         ScreenFragmentActivity.restore(context);
         SPenPowerSavingMode.restore(context);
         TouchkeyTimeout.restore(context);
-        VibratorTuningPreference.restore(context);
     }
 }

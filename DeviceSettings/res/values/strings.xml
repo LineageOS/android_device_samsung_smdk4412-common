@@ -47,15 +47,6 @@
     <string name="touchkey_timeout_title_head">Backlight timeout</string>
     <string name="touchkey_timeout_summary_head">Set timeout for the backlight</string>
 
-    <!-- Haptic Preference -->
-    <string name="category_haptic_title">Haptic</string>
-
-    <!-- VibratorTuning -->
-    <string name="vibrator_title">Vibrator</string>
-    <string name="vibrator_tuning_title">Vibration strength</string>
-    <string name="vibrator_tuning_summary_head">Adjust the strength of the vibration feedback</string>
-    <string name="vibrator_warning">Values higher than %1$d are not recommended</string>
-
     <!-- Radio Preference -->
     <string name="category_radio_title">Radio</string>
     <string name="hspa_title_head">HSPA</string>
