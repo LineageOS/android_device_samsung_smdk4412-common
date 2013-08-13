@@ -20,12 +20,8 @@
 <resources>
     <!-- Allows setting video size before recording starts -->
     <bool name="needsEarlyVideoSize">true</bool>
-    <!-- Force use of profile video size -->
-    <bool name="useProfileVideoSize">true</bool>
     <!-- Samsung Camcorder Mode -->
     <bool name="needsSamsungCamMode">true</bool>
-    <!-- Samsung Camera Settings -->
-    <bool name="hasSamsungCamSettings">true</bool>
     <!-- Use ZSL mode -->
     <bool name="enableZSL">true</bool>
     <!-- Magic for enabling ZSL on Samsung cameras -->
