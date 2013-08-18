@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee8101_137eaeae",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "http://pastebin.com/ef7PvEmN",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_b36c8209",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "Take out all the comments please, they shouldn\u0027t be in any of the non-English string files.",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_d335c6f7",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "https://github.com/CyanogenMod/android_device_samsung_i9100g/blob/cm-10.1/DeviceSettings/res/values-zh-rCN/strings.xml#L24",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_537436ce",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "We usually have spaces before and after English words in the middle of a phrase.",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_3381b290",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "Why is there a space after \"Enable/disable\"?",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_f349ea8f",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "http://pastebin.com/yPaUuCf9",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_d34ee695",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "See: https://github.com/CyanogenMod/android_device_samsung_i9100g/blob/cm-10.1/DeviceSettings/res/values-zh-rCN/strings.xml#L49",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_b343626c",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "You can keep \"shu zhi\" instead of \"zhi\" as it is in the above link, it sounds better.",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_93485e89",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "https://github.com/CyanogenMod/android_device_samsung_i9100g/blob/cm-10.1/DeviceSettings/res/values-zh-rCN/strings.xml#L55",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_735e1a47",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "Keep it consistent, make them all \"di zuo\" or \"ji zuo\", both works for me.\n\nAlso: https://github.com/CyanogenMod/android_device_samsung_i9100g/blob/cm-10.1/DeviceSettings/res/values-zh-rCN/strings.xml#L62",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_33589256",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "\"jian yi\" instead of \"tui jian\"?",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_13558e1c",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "\"jian yi\" instead of \"tui jian\"?",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_535b1655",
+        "filename": "DeviceSettings/res/values-zh-rCN/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 3589
+      },
+      "writtenOn": "2013-08-18T12:06:06Z",
+      "side": 1,
+      "message": "http://pastebin.com/cJw5455j",
+      "revId": "80dfeb5231c23505388f8018e585a55fda8cb6c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
