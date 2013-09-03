@@ -39,7 +39,8 @@
 /dev/video11              0666   system     graphics
 /dev/video12              0660   system     camera
 
-/dev/video16              0660   system     system
+# HDMI
+/dev/video16              0660   media      graphics
 /dev/video17              0660   system     system
 /dev/video18              0660   system     system
 /dev/video19              0660   system     system
@@ -63,10 +64,10 @@
 /dev/video43              0660   system     camera
 
 /dev/i2c-2                0660   system     system
-/dev/i2c-5                0660   system     system
+/dev/i2c-5                0660   media      system
 /dev/i2c-6                0660   system     system
 /dev/CEC                  0660   system     system
-/dev/HPD                  0660   system     system
+/dev/HPD                  0660   media      system
 /dev/fimg2d               0666   system     graphics
 /dev/fmradio              0660   system     audio
 
