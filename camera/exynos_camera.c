@@ -124,8 +124,8 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.whitebalance = "auto",
 			.whitebalance_values = "auto,incandescent,fluorescent,daylight,cloudy-daylight",
 
-			.antibanding = "50hz",
-			.antibanding_values = "50hz,off",
+			.antibanding = "auto",
+			.antibanding_values = "off,auto,50hz,60hz",
 
 			.scene_mode = "auto",
 			.scene_mode_values = "auto,portrait,landscape,night,beach,snow,sunset,fireworks,sports,party,candlelight,dusk-dawn,fall-color,text,back-light",
