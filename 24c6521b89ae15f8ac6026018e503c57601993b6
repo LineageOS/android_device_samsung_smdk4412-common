@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba076199_08b67cdc",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 990,
+      "author": {
+        "id": 2296
+      },
+      "writtenOn": "2013-09-10T00:47:59Z",
+      "side": 1,
+      "message": "tabs derp",
+      "revId": "24c6521b89ae15f8ac6026018e503c57601993b6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
