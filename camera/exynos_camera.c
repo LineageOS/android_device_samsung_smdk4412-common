@@ -59,6 +59,17 @@ struct exynos_camera_mbus_resolution exynos_camera_mbus_resolutions_s5k6a3_smdk4
 	{ 320, 320,	1392, 1392 },
 };
 
+struct exynos_camera_videosnapshot_resolution exynos_camera_videosnapshot_resolutions_s5c73m3[] = {
+	//Capture Size - Snapshot Size
+	{ 1920, 1080,	3264, 1836 },
+	{ 1280, 720,	3264, 1836 },
+	{ 720, 480,	3264, 2176 },
+	{ 640, 480,	3264, 2488 },
+	{ 352, 288,	3264, 2488 },
+	{ 320, 240,	3264, 2488 },
+	{ 176, 144,	3264, 2488 },
+};
+
 struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 	{
 		.name = "S5C73M3",
@@ -94,8 +105,8 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.jpeg_thumbnail_quality = 100,
 			.jpeg_quality = 90,
 
-			.video_snapshot_supported = 0,
-			.full_video_snap_supported = 0,
+			.video_snapshot_supported = 1,
+			.full_video_snap_supported = 1,
 
 			.recording_size = "1280x720",
 			.recording_size_values = "1280x720,1920x1080,720x480,640x480,352x288,320x240,176x144",
@@ -138,6 +149,9 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 		},
 		.mbus_resolutions = NULL,
 		.mbus_resolutions_count = 0,
+
+		.videosnapshot_resolutions = exynos_camera_videosnapshot_resolutions_s5c73m3,
+		.videosnapshot_resolutions_count = 7,
 	},
 	{
 		.name = "S5K6A3",
@@ -173,8 +187,8 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.jpeg_thumbnail_quality = 100,
 			.jpeg_quality = 90,
 
-			.video_snapshot_supported = 0,
-			.full_video_snap_supported = 0,
+			.video_snapshot_supported = 1,
+			.full_video_snap_supported = 1,
 
 			.recording_size = "1280x720",
 			.recording_size_values = "1280x720,720x480,640x480,352x288,320x320,320x240,176x144",
@@ -377,6 +391,9 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 
 	exynos_camera->camera_mbus_resolutions = exynos_camera->config->presets[id].mbus_resolutions;
 	exynos_camera->camera_mbus_resolutions_count = exynos_camera->config->presets[id].mbus_resolutions_count;
+
+	exynos_camera->camera_videosnapshot_resolutions = exynos_camera->config->presets[id].videosnapshot_resolutions;
+	exynos_camera->camera_videosnapshot_resolutions_count = exynos_camera->config->presets[id].videosnapshot_resolutions_count;
 
 	// Recording preview
 
@@ -657,12 +674,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		if (picture_width != 0 && picture_height != 0 && (picture_width != exynos_camera->picture_width || picture_height != exynos_camera->picture_height)) {
 			exynos_camera->picture_width = picture_width;
 			exynos_camera->picture_height = picture_height;
-
-			if (exynos_camera->camera_capture_format == V4L2_PIX_FMT_INTERLEAVED) {
-				rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_JPEG_RESOLUTION, (picture_width & 0xffff) << 16 | (picture_height & 0xffff));
-				if (rc < 0)
-					ALOGE("%s: Unablet to set jpeg resolution", __func__);
-			}
 		}
 	}
 
@@ -1897,7 +1908,7 @@ int exynos_camera_capture_setup(struct exynos_camera *exynos_camera)
 	struct exynos_camera_capture_listener *listener;
 	struct list_head *list;
 	int width, height, format;
-	int rc;
+	int rc, i;
 
 	if (exynos_camera == NULL)
 		return -EINVAL;
@@ -1936,12 +1947,33 @@ list_continue:
 		format = exynos_camera->camera_capture_format;
 
 	// Only picture is listening, but we need some preview size anyway
-	if (format == V4L2_PIX_FMT_INTERLEAVED && (width == 0 || height == 0)) {
-		width = exynos_camera->preview_width;
-		height = exynos_camera->preview_height;
+	if (format == V4L2_PIX_FMT_INTERLEAVED) {
+		if (width == 0 || height == 0) {
+			width = exynos_camera->preview_width;
+			height = exynos_camera->preview_height;
+		}
+			//Back Facing Camera - Snapshot while Video Recording
+			if (exynos_camera->camera_videosnapshot_resolutions != NULL && !exynos_camera->camera_fimc_is && exynos_camera->camera_sensor_mode == SENSOR_MOVIE) {
+				for (i = 0; i < exynos_camera->camera_videosnapshot_resolutions_count; i++) {
+					if (exynos_camera->camera_videosnapshot_resolutions[i].video_width == exynos_camera->recording_width && exynos_camera->camera_videosnapshot_resolutions[i].video_height == exynos_camera->recording_height) {
+						exynos_camera->picture_width = exynos_camera->camera_videosnapshot_resolutions[i].snapshot_width;
+						exynos_camera->picture_height = exynos_camera->camera_videosnapshot_resolutions[i].snapshot_height;
+						break;
+					}
+				}
+
+				rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_JPEG_RESOLUTION, (exynos_camera->picture_width & 0xffff) << 16 | (exynos_camera->picture_height & 0xffff));
+				if (rc < 0)
+					ALOGE("%s: Unable to set jpeg resolution", __func__);
+			}
+
+	} else if (format == V4L2_PIX_FMT_YUYV && exynos_camera->camera_fimc_is && exynos_camera->camera_sensor_mode == SENSOR_MOVIE){
+		//Front Facing Camera - Use Recording size as Snapshot size
+		exynos_camera->picture_width = exynos_camera->recording_width;
+		exynos_camera->picture_height = exynos_camera->recording_height;
 	}
 
-	ALOGD("%s: Selected width: %d, height: %d, format: 0x%x", __func__, width, height, format);
+	ALOGE("%s: Capture width: %d, height: %d, format: 0x%x", __func__, width, height, format);
 
 	if (!exynos_camera->capture_enabled) {
 		exynos_camera->capture_width = width;

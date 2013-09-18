@@ -111,6 +111,13 @@ struct exynos_camera_mbus_resolution {
 	int mbus_height;
 };
 
+struct exynos_camera_videosnapshot_resolution {
+	int video_width;
+	int video_height;
+	int snapshot_width;
+	int snapshot_height;
+};
+
 struct exynos_camera_params {
 	char *preview_size_values;
 	char *preview_size;
@@ -196,6 +203,8 @@ struct exynos_camera_preset {
 	struct exynos_camera_params params;
 	struct exynos_camera_mbus_resolution *mbus_resolutions;
 	int mbus_resolutions_count;
+	struct exynos_camera_videosnapshot_resolution *videosnapshot_resolutions;
+	int videosnapshot_resolutions_count;
 };
 
 struct exynos_v4l2_node {
@@ -385,6 +394,9 @@ struct exynos_camera {
 
 	struct exynos_camera_mbus_resolution *camera_mbus_resolutions;
 	int camera_mbus_resolutions_count;
+
+	struct exynos_camera_videosnapshot_resolution *camera_videosnapshot_resolutions;
+	int camera_videosnapshot_resolutions_count;
 
 	int camera_sensor_mode;
 	int fimc_is_mode;
