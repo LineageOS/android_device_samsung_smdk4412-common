@@ -4,8 +4,6 @@ system/bin/bcm4334_murata.hcd
 system/bin/bcm4334_semcosh.hcd
 system/bin/bintvoutservice
 system/bin/gps.cer
-system/bin/lpmkey
-system/bin/playlpm
 system/cameradata/datapattern_420sp.yuv
 system/cameradata/datapattern_front_420sp.yuv
 system/etc/srm.bin
