@@ -53,15 +53,6 @@ service ueventd /sbin/ueventd
 service console /system/bin/sh
     console
 
-service playlpm /system/bin/playlpm
-    user root
-
-service immvibed /system/bin/immvibed 
-    oneshot
-
-service lpmkey /system/bin/lpmkey
-    user root
-
 # adbd is controlled by the persist.service.adb.enable system property
 service adbd /sbin/adbd
     disabled
@@ -76,3 +67,5 @@ on property:persist.service.adb.enable=1
 on property:persist.service.adb.enable=0
     stop adbd
 
+service charger /charger
+    user root
