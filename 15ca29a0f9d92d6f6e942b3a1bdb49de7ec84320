@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_8586e211",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-09-20T05:21:52Z",
+      "side": 0,
+      "message": "It seems legit to do that at this point when taking an usual shot. What\u0027s the point of removing this anyway?",
+      "revId": "15ca29a0f9d92d6f6e942b3a1bdb49de7ec84320",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}

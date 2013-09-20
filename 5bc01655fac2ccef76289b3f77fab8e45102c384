@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_a581defd",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-09-20T05:21:52Z",
+      "side": 1,
+      "message": "Please cast to a pointer and use \"\u0026\" for the sake of consistency.",
+      "revId": "5bc01655fac2ccef76289b3f77fab8e45102c384",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_657c0621",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1950,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-09-20T05:21:52Z",
+      "side": 1,
+      "message": "Sorry but I don\u0027t think this is the appropriate place for this at all. Rather, grab and set the snapshot resolution in exynos_camera_picture_thread_start.",
+      "revId": "5bc01655fac2ccef76289b3f77fab8e45102c384",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_45790a2f",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1969,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-09-20T05:21:52Z",
+      "side": 1,
+      "message": "This (below) has to be done somewhere else as well. Probably when starting the shot, in exynos_camera_picture_thread_start too. Also, I\u0027m not sure the test on the format is legit.",
+      "revId": "5bc01655fac2ccef76289b3f77fab8e45102c384",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
