@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_059c3268",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1649
+      },
+      "writtenOn": "2013-09-20T05:11:45Z",
+      "side": 0,
+      "message": "It seems like there is an indentation issue there. You probably want \"if (image_stabilization !\u003d exynos_camera-\u003eimage_stabilization […]\" to have the same indentation as the previous else.",
+      "revId": "30219ee2b54042acc48d379c5674cb71d5c2d192",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
