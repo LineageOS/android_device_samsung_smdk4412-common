@@ -135,6 +135,9 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.iso = "auto",
 			.iso_values = "auto,ISO100,ISO200,ISO400,ISO800",
+
+			.image_stabilization = "off",
+			.image_stabilization_values = "on,off",
 		},
 		.mbus_resolutions = NULL,
 		.mbus_resolutions_count = 0,
@@ -210,6 +213,9 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.iso = "auto",
 			.iso_values = "auto",
+
+			.image_stabilization = "off",
+			.image_stabilization_values = "off",
 		},
 		.mbus_resolutions = (struct exynos_camera_mbus_resolution *) &exynos_camera_mbus_resolutions_s5k6a3_smdk4x12,
 		.mbus_resolutions_count = 8,
@@ -523,6 +529,13 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 	exynos_param_string_set(exynos_camera, "iso-values",
 		exynos_camera->config->presets[id].params.iso_values);
 
+	// Image stabilization (Anti-shake)
+
+	exynos_param_string_set(exynos_camera, "image-stabilization",
+	exynos_camera->config->presets[id].params.image_stabilization);
+	exynos_param_string_set(exynos_camera, "image-stabilization-values",
+	exynos_camera->config->presets[id].params.image_stabilization_values);
+
 	// Camera
 
 	exynos_param_float_set(exynos_camera, "focal-length",
@@ -603,6 +616,9 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	char *iso_string;
 	int iso;
+
+	char *image_stabilization_string;
+	int image_stabilization;
 
 	int w, h;
 	char *k;
@@ -1072,6 +1088,22 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		}
 	}
 
+	// Image stabilization (Anti-shake)
+
+	image_stabilization_string = exynos_param_string_get(exynos_camera, "image-stabilization");
+	if (image_stabilization_string != NULL) {
+		if (strcmp(image_stabilization_string, "on") == 0)
+			image_stabilization = ANTI_SHAKE_STILL_ON;
+		else
+			image_stabilization = ANTI_SHAKE_OFF;
+
+		if (image_stabilization != exynos_camera->image_stabilization || force) {
+			exynos_camera->image_stabilization = image_stabilization;
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ANTI_SHAKE, image_stabilization);
+			if (rc < 0)
+				ALOGE("%s: Unable to set image-stabilization", __func__);
+		}
+	}
 	ALOGD("%s: Preview size: %dx%d, picture size: %dx%d, recording size: %dx%d", __func__, preview_width, preview_height, picture_width, picture_height, recording_width, recording_height);
 
 	return 0;

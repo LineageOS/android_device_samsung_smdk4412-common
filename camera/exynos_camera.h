@@ -172,6 +172,9 @@ struct exynos_camera_params {
 
 	char *iso;
 	char *iso_values;
+
+	char *image_stabilization; // Anti-shake
+	char *image_stabilization_values;
 };
 
 struct exynos_camera_preset {
@@ -417,6 +420,7 @@ struct exynos_camera {
 	int effect;
 	int iso;
 	int metering;
+	int image_stabilization;
 };
 
 struct exynos_camera_addrs {
