@@ -709,10 +709,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	jpeg_quality = exynos_param_int_get(exynos_camera, "jpeg-quality");
 	if (jpeg_quality <= 100 && jpeg_quality >= 0 && (jpeg_quality != exynos_camera->jpeg_quality || force)) {
-		exynos_camera->jpeg_quality = jpeg_quality;
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAM_JPEG_QUALITY, jpeg_quality);
 		if (rc < 0)
 			ALOGE("%s: Unable to set jpeg quality", __func__);
+		else
+			exynos_camera->jpeg_quality = jpeg_quality;
 	}
 
 	// Recording
@@ -791,18 +792,19 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	// Switching modes
 
 	if (camera_sensor_mode != exynos_camera->camera_sensor_mode) {
-		exynos_camera->camera_sensor_mode = camera_sensor_mode;
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SENSOR_MODE, camera_sensor_mode);
 		if (rc < 0)
 			ALOGE("%s: Unable to set sensor mode", __func__);
+		else
+			exynos_camera->camera_sensor_mode = camera_sensor_mode;
 	}
 
 	if (exynos_camera->camera_fimc_is && fimc_is_mode != exynos_camera->fimc_is_mode) {
-		exynos_camera->fimc_is_mode = fimc_is_mode;
-
-		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_IS_S_FORMAT_SCENARIO, exynos_camera->fimc_is_mode);
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_IS_S_FORMAT_SCENARIO, fimc_is_mode);
 		if (rc < 0)
 			ALOGE("%s: Unable to set FIMC-IS scenario", __func__);
+		else
+			exynos_camera->fimc_is_mode = fimc_is_mode;
 	}
 
 	// Focus
@@ -820,22 +822,23 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			focus_y =  (((focus_top + focus_bottom) / 2) + 1000) * preview_height / 2000;
 
 			if (focus_x != exynos_camera->focus_x || force) {
-				exynos_camera->focus_x = focus_x;
-
 				rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_OBJECT_POSITION_X, focus_x);
 				if (rc < 0)
 					ALOGE("%s: Unable to set object x position", __func__);
+				else {
+					exynos_camera->focus_x = focus_x;
+
+					focus_mode = FOCUS_MODE_TOUCH;
+
+					if (focus_y != exynos_camera->focus_y || force) {
+						rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_OBJECT_POSITION_Y, focus_y);
+						if (rc < 0)
+							ALOGE("%s: Unable to set object y position", __func__);
+						else
+							exynos_camera->focus_y = focus_y;
+					}
+				}
 			}
-
-			if (focus_y != exynos_camera->focus_y || force) {
-				exynos_camera->focus_y = focus_y;
-
-				rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_OBJECT_POSITION_Y, focus_y);
-				if (rc < 0)
-					ALOGE("%s: Unable to set object y position", __func__);
-			}
-
-			focus_mode = FOCUS_MODE_TOUCH;
 		}
 	}
 
@@ -864,9 +867,9 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
 			if (rc < 0)
 				ALOGE("%s: Unable to set focus mode", __func__);
+			else
+				exynos_camera->focus_mode = focus_mode;
 		}
-
-		exynos_camera->focus_mode = focus_mode;
 	}
 
 	// Zoom
@@ -876,12 +879,12 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		zoom = exynos_param_int_get(exynos_camera, "zoom");
 		max_zoom = exynos_param_int_get(exynos_camera, "max-zoom");
 		if (zoom <= max_zoom && zoom >= 0 && (zoom != exynos_camera->zoom || force)) {
-			exynos_camera->zoom = zoom;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ZOOM, zoom);
 			if (rc < 0)
 				ALOGE("%s: Unable to set camera zoom", __func__);
+			else
+				exynos_camera->zoom = zoom;
 		}
-
 	}
 
 	// Flash
@@ -900,10 +903,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			flash_mode = FLASH_MODE_AUTO;
 
 		if (flash_mode != exynos_camera->flash_mode || force) {
-			exynos_camera->flash_mode = flash_mode;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FLASH_MODE, flash_mode);
 			if (rc < 0)
 				ALOGE("%s:Unable to set flash mode", __func__);
+			else
+				exynos_camera->flash_mode = flash_mode;
 		}
 	}
 
@@ -915,10 +919,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	if (exposure_compensation <= max_exposure_compensation && exposure_compensation >= min_exposure_compensation &&
 		(exposure_compensation != exynos_camera->exposure_compensation || force)) {
-		exynos_camera->exposure_compensation = exposure_compensation;
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_BRIGHTNESS, exposure_compensation);
 		if (rc < 0)
 			ALOGE("%s: Unable to set exposure", __func__);
+		else
+			exynos_camera->exposure_compensation = exposure_compensation;
 	}
 
 	// Antibanding
@@ -937,10 +942,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			antibanding = ANTI_BANDING_AUTO;
 
 		if (antibanding != exynos_camera->antibanding || force) {
-			exynos_camera->antibanding = antibanding;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ANTI_BANDING, antibanding);
 			if (rc < 0)
 				ALOGE("%s: Unable to set antibanding", __func__);
+			else
+				exynos_camera->antibanding = antibanding;
 		}
 	}
 
@@ -962,10 +968,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			whitebalance = WHITE_BALANCE_AUTO;
 
 		if (whitebalance != exynos_camera->whitebalance || force) {
-			exynos_camera->whitebalance = whitebalance;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_WHITE_BALANCE, whitebalance);
 			if (rc < 0)
 				ALOGE("%s: Unable to set whitebalance", __func__);
+			else
+				exynos_camera->whitebalance = whitebalance;
 		}
 	}
 
@@ -1009,10 +1016,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			scene_mode = SCENE_MODE_NONE;
 
 		if (scene_mode != exynos_camera->scene_mode || force) {
-			exynos_camera->scene_mode = scene_mode;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, scene_mode);
 			if (rc < 0)
 				ALOGE("%s: Unable to set scene mode", __func__);
+			else
+				exynos_camera->scene_mode = scene_mode;
 		}
 	}
 
@@ -1054,10 +1062,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			effect = IMAGE_EFFECT_NONE;
 
 		if (effect != exynos_camera->effect || force) {
-			exynos_camera->effect = effect;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EFFECT, effect);
 			if (rc < 0)
 				ALOGE("%s: Unable to set effect", __func__);
+			else
+				exynos_camera->effect = effect;
 		}
 	}
 
@@ -1081,10 +1090,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			iso = ISO_AUTO;
 
 		if (iso != exynos_camera->iso || force) {
-			exynos_camera->iso = iso;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ISO, iso);
 			if (rc < 0)
 				ALOGE("%s: Unable to set iso", __func__);
+			else
+				exynos_camera->iso = iso;
 		}
 	}
 
@@ -1098,10 +1108,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			image_stabilization = ANTI_SHAKE_OFF;
 
 		if (image_stabilization != exynos_camera->image_stabilization || force) {
-			exynos_camera->image_stabilization = image_stabilization;
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ANTI_SHAKE, image_stabilization);
 			if (rc < 0)
 				ALOGE("%s: Unable to set image-stabilization", __func__);
+			else
+				exynos_camera->image_stabilization = image_stabilization;
 		}
 	}
 	ALOGD("%s: Preview size: %dx%d, picture size: %dx%d, recording size: %dx%d", __func__, preview_width, preview_height, picture_width, picture_height, recording_width, recording_height);
