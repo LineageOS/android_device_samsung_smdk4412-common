@@ -113,6 +113,12 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.zoom = 0,
 			.max_zoom = 30,
 
+			.auto_exposure_lock_supported = 1,
+			.auto_exposure_lock = 0,
+
+			.auto_white_balance_lock_supported = 1,
+			.auto_white_balance_lock = 0,
+
 			.flash_mode = "off",
 			.flash_mode_values = "off,auto,on,torch",
 
@@ -190,6 +196,12 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.max_num_focus_areas = 0,
 
 			.zoom_supported = 0,
+
+			.auto_exposure_lock_supported = 0,
+			.auto_exposure_lock = 0,
+
+			.auto_white_balance_lock_supported = 0,
+			.auto_white_balance_lock = 0,
 
 			.flash_mode = NULL,
 			.flash_mode_values = NULL,
@@ -476,6 +488,26 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 		exynos_param_string_set(exynos_camera, "zoom-supported", "false");
 	}
 
+	// AE lock
+	if (exynos_camera->config->presets[id].params.auto_exposure_lock_supported == 1) {
+		exynos_param_string_set(exynos_camera, "auto-exposure-lock-supported", "true");
+
+		if (exynos_camera->config->presets[id].params.auto_exposure_lock)
+			exynos_param_string_set(exynos_camera, "auto-exposure-lock", "true");
+		else
+			exynos_param_string_set(exynos_camera, "auto-exposure-lock", "false");
+	}
+
+	// AWB lock
+	if (exynos_camera->config->presets[id].params.auto_white_balance_lock_supported == 1) {
+		exynos_param_string_set(exynos_camera, "auto-whitebalance-lock-supported", "true");
+
+		if (exynos_camera->config->presets[id].params.auto_white_balance_lock)
+			exynos_param_string_set(exynos_camera, "auto-whitebalance-lock", "true");
+		else
+			exynos_param_string_set(exynos_camera, "auto-whitebalance-lock", "false");
+	}
+
 	// Flash
 
 	exynos_param_string_set(exynos_camera, "flash-mode",
@@ -594,6 +626,13 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	char *zoom_supported_string;
 	int zoom, max_zoom;
+
+	char *ae_lock_supported_string;
+	int ae_lock = 0;
+
+	char *awb_lock_supported_string;
+	int awb_lock = 0;
+	int aeawb = 0;
 
 	char *flash_mode_string;
 	int flash_mode;
@@ -882,6 +921,31 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				ALOGE("%s: Unable to set camera zoom", __func__);
 		}
 
+	}
+
+	// AE lock
+
+	ae_lock_supported_string = exynos_param_string_get(exynos_camera, "auto-exposure-lock-supported");
+	if (ae_lock_supported_string != NULL && strcmp(ae_lock_supported_string, "true") == 0) {
+		ae_lock = strcmp(exynos_param_string_get(exynos_camera, "auto-exposure-lock"), "true") ? 1 : 0;
+	}
+
+	// AWB lock
+
+	awb_lock_supported_string = exynos_param_string_get(exynos_camera, "auto-whitebalance-lock-supported");
+	if (awb_lock_supported_string != NULL && strcmp(awb_lock_supported_string, "true") == 0) {
+		awb_lock = strcmp(exynos_param_string_get(exynos_camera, "auto-whitebalance-lock"), "true") ? 1 : 0;
+	}
+
+	if ( (ae_lock != exynos_camera->ae_lock) || (awb_lock != exynos_camera->awb_lock) || force ) {
+		aeawb = (ae_lock ? 0x1 : 0x0) | (awb_lock ? 0x2 : 0x0);
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, aeawb);
+		if (rc < 0)
+			ALOGE("%s:Unable to set AEAWB lock", __func__);
+		else {
+			exynos_camera->ae_lock = ae_lock;
+			exynos_camera->awb_lock = awb_lock;
+		}
 	}
 
 	// Flash
