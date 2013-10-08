@@ -150,6 +150,12 @@ struct exynos_camera_params {
 	int zoom;
 	int max_zoom;
 
+	int auto_exposure_lock_supported;
+	int auto_exposure_lock;
+
+	int auto_white_balance_lock_supported;
+	int auto_white_balance_lock;
+
 	char *flash_mode;
 	char *flash_mode_values;
 
@@ -412,6 +418,8 @@ struct exynos_camera {
 	int focus_x;
 	int focus_y;
 	int zoom;
+	int ae_lock;
+	int awb_lock;
 	int flash_mode;
 	int exposure_compensation;
 	int whitebalance;
