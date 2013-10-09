@@ -328,7 +328,7 @@ bv_ioctl:
 		attributes->exposure_bias.den = EXIF_DEF_APEX_DEN;
 	}
 
-	switch (exynos_camera->camera_metering) {
+	switch (exynos_camera->metering) {
 		case METERING_CENTER:
 			attributes->metering_mode = EXIF_METERING_CENTER;
 			break;

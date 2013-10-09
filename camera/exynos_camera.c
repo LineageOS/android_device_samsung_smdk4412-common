@@ -73,7 +73,6 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 		.focal_length = 3.7f,
 		.horizontal_view_angle = 63.0f,
 		.vertical_view_angle = 49.3f,
-		.metering = METERING_CENTER,
 		.params = {
 			.preview_size_values = "960x720,1280x720,1184x666,960x640,704x576,640x480,352x288,320x240",
 			.preview_size = "960x720",
@@ -113,6 +112,13 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.zoom = 0,
 			.max_zoom = 30,
 
+			.contrast = 2,
+			.min_contrast = 0,
+			.max_contrast = 4,
+
+			.metering = "center",
+			.metering_values = "center,spot,matrix",
+
 			.auto_exposure_lock_supported = 1,
 			.auto_exposure_lock = 0,
 
@@ -144,6 +150,9 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.image_stabilization = "off",
 			.image_stabilization_values = "on,off",
+
+			.video_stabilization = "off",
+			.video_stabilization_values = "off",
 		},
 		.mbus_resolutions = NULL,
 		.mbus_resolutions_count = 0,
@@ -161,7 +170,6 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 		.focal_length = 2.73f,
 		.horizontal_view_angle = 52.58f,
 		.vertical_view_angle = 52.58f,
-		.metering = METERING_CENTER,
 		.params = {
 			.preview_size_values = "1280x720,960x720,640x480,320x240,704x704,320x320",
 			.preview_size = "960x720",
@@ -197,6 +205,13 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.zoom_supported = 0,
 
+			.contrast = 2,
+			.min_contrast = 0,
+			.max_contrast = 4,
+
+			.metering = "center",
+			.metering_values = "center",
+
 			.auto_exposure_lock_supported = 0,
 			.auto_exposure_lock = 0,
 
@@ -228,6 +243,9 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.image_stabilization = "off",
 			.image_stabilization_values = "off",
+
+			.video_stabilization = "off",
+			.video_stabilization_values = "off",
 		},
 		.mbus_resolutions = (struct exynos_camera_mbus_resolution *) &exynos_camera_mbus_resolutions_s5k6a3_smdk4x12,
 		.mbus_resolutions_count = 8,
@@ -391,7 +409,6 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 	exynos_camera->camera_picture_format = exynos_camera->config->presets[id].picture_format;
 	exynos_camera->camera_fimc_is = exynos_camera->config->presets[id].fimc_is;
 	exynos_camera->camera_focal_length = (int) (exynos_camera->config->presets[id].focal_length * 100);
-	exynos_camera->camera_metering = exynos_camera->config->presets[id].metering;
 
 	exynos_camera->camera_mbus_resolutions = exynos_camera->config->presets[id].mbus_resolutions;
 	exynos_camera->camera_mbus_resolutions_count = exynos_camera->config->presets[id].mbus_resolutions_count;
@@ -488,6 +505,15 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 		exynos_param_string_set(exynos_camera, "zoom-supported", "false");
 	}
 
+	// Contrast
+	exynos_param_int_set(exynos_camera, "contrast", exynos_camera->config->presets[id].params.contrast);
+	exynos_param_int_set(exynos_camera, "min-contrast", exynos_camera->config->presets[id].params.min_contrast);
+	exynos_param_int_set(exynos_camera, "max-contrast", exynos_camera->config->presets[id].params.max_contrast);
+
+	// Metering
+	exynos_param_string_set(exynos_camera, "metering", exynos_camera->config->presets[id].params.metering);
+	exynos_param_string_set(exynos_camera, "metering-values", exynos_camera->config->presets[id].params.metering_values);
+
 	// AE lock
 	if (exynos_camera->config->presets[id].params.auto_exposure_lock_supported == 1) {
 		exynos_param_string_set(exynos_camera, "auto-exposure-lock-supported", "true");
@@ -568,6 +594,13 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 	exynos_param_string_set(exynos_camera, "image-stabilization-values",
 	exynos_camera->config->presets[id].params.image_stabilization_values);
 
+	// Video stabilization (Anti-shake)
+
+	exynos_param_string_set(exynos_camera, "video-stabilization",
+	exynos_camera->config->presets[id].params.video_stabilization);
+	exynos_param_string_set(exynos_camera, "video-stabilization-values",
+	exynos_camera->config->presets[id].params.video_stabilization_values);
+
 	// Camera
 
 	exynos_param_float_set(exynos_camera, "focal-length",
@@ -627,6 +660,12 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	char *zoom_supported_string;
 	int zoom, max_zoom;
 
+	int contrast;
+	int min_contrast, max_contrast;
+
+	char *metering_string;
+	int metering = METERING_CENTER;
+
 	char *ae_lock_supported_string;
 	int ae_lock = 0;
 
@@ -658,6 +697,9 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	char *image_stabilization_string;
 	int image_stabilization;
+
+	char *video_stabilization_string;
+	int video_stabilization;
 
 	int w, h;
 	char *k;
@@ -921,6 +963,40 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				ALOGE("%s: Unable to set camera zoom", __func__);
 		}
 
+	}
+
+	// Contrast
+
+	contrast = exynos_param_int_get(exynos_camera, "contrast");
+	min_contrast = exynos_param_int_get(exynos_camera, "min-contrast");
+	max_contrast = exynos_param_int_get(exynos_camera, "max-contrast");
+
+	if (contrast <= max_contrast && contrast >= min_contrast &&
+		(contrast != exynos_camera->contrast || force)) {
+			exynos_camera->contrast = contrast;
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_CONTRAST, contrast);
+			if (rc < 0)
+				ALOGE("%s: Unable to set contrast", __func__);
+		}
+
+	// Metering
+	metering_string = exynos_param_string_get(exynos_camera, "metering");
+	if (metering_string != NULL) {
+		if (strcmp(metering_string, "center"))
+			metering = METERING_CENTER;
+		else if (strcmp(metering_string, "spot"))
+			metering = METERING_SPOT;
+		else if (strcmp(metering_string, "matrix"))
+			metering = METERING_MATRIX;
+		else
+			metering = METERING_CENTER;
+
+		if (metering != exynos_camera->metering || force) {
+			exynos_camera->metering = metering;
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_METERING, metering);
+			if (rc < 0)
+				ALOGE("%s: Unable to set metering", __func__);
+		}
 	}
 
 	// AE lock

@@ -150,6 +150,13 @@ struct exynos_camera_params {
 	int zoom;
 	int max_zoom;
 
+	int contrast;
+	int min_contrast;
+	int max_contrast;
+
+	char *metering;
+	char *metering_values;
+
 	int auto_exposure_lock_supported;
 	int auto_exposure_lock;
 
@@ -181,6 +188,9 @@ struct exynos_camera_params {
 
 	char *image_stabilization; // Anti-shake
 	char *image_stabilization_values;
+
+	char *video_stabilization;  // Anti-shake
+	char *video_stabilization_values;
 };
 
 struct exynos_camera_preset {
@@ -199,8 +209,6 @@ struct exynos_camera_preset {
 	float focal_length;
 	float horizontal_view_angle;
 	float vertical_view_angle;
-
-	int metering;
 
 	struct exynos_camera_params params;
 	struct exynos_camera_mbus_resolution *mbus_resolutions;
@@ -390,7 +398,6 @@ struct exynos_camera {
 	int camera_picture_format;
 	int camera_fimc_is;
 	int camera_focal_length;
-	int camera_metering;
 
 	struct exynos_camera_mbus_resolution *camera_mbus_resolutions;
 	int camera_mbus_resolutions_count;
@@ -418,6 +425,7 @@ struct exynos_camera {
 	int focus_x;
 	int focus_y;
 	int zoom;
+	int contrast;
 	int ae_lock;
 	int awb_lock;
 	int flash_mode;
@@ -429,6 +437,7 @@ struct exynos_camera {
 	int iso;
 	int metering;
 	int image_stabilization;
+	int video_stabilization;
 };
 
 struct exynos_camera_addrs {
