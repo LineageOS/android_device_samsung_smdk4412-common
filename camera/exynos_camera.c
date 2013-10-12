@@ -2603,7 +2603,7 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 	pthread_mutex_lock(&exynos_camera->picture_mutex);
 
 	if (!exynos_camera->picture_enabled && !exynos_camera->camera_fimc_is) {
-		if (exynos_camera->focus_mode == FOCUS_MODE_CONTINOUS_PICTURE && exynos_camera->capture_auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
+		if (exynos_camera->camera_capture_format == V4L2_PIX_FMT_INTERLEAVED && exynos_camera->zoom == 0 && exynos_camera->focus_mode == FOCUS_MODE_CONTINOUS_PICTURE && exynos_camera->capture_auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
 			pthread_mutex_unlock(&exynos_camera->picture_mutex);
 			return 0;
 		}
