@@ -76,7 +76,6 @@ BOARD_EGL_CFG := device/samsung/smdk4412-common/configs/egl.cfg
 USE_OPENGL_RENDERER := true
 BOARD_USES_SKIAHWJPEG := true
 COMMON_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D
-BOARD_EGL_NEEDS_LEGACY_FB := true
 
 # FIMG Acceleration
 BOARD_USES_FIMGAPI := true
