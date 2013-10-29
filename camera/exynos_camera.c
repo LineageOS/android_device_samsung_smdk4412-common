@@ -2603,10 +2603,12 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 	pthread_mutex_lock(&exynos_camera->picture_mutex);
 
 	if (!exynos_camera->picture_enabled && !exynos_camera->camera_fimc_is) {
+#if 0
 		if (exynos_camera->focus_mode == FOCUS_MODE_CONTINOUS_PICTURE && exynos_camera->capture_auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
 			pthread_mutex_unlock(&exynos_camera->picture_mutex);
 			return 0;
 		}
+#endif
 
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_CAPTURE, 0);
 		if (rc < 0) {
