@@ -101,10 +101,10 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.recording_size_values = "1280x720,1920x1080,720x480,640x480,352x288,320x240,176x144",
 			.recording_format = "yuv420sp",
 
-			.focus_mode = "continuous-picture",
+			.focus_mode = "auto",
 			.focus_mode_values = "auto,infinity,macro,fixed,continuous-picture,continuous-video",
 			.focus_distances = "0.15,1.20,Infinity",
-			.focus_areas = NULL,
+			.focus_areas = "(0,0,0,0,0)",
 			.max_num_focus_areas = 1,
 
 			.zoom_supported = 1,
@@ -466,6 +466,8 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 	if (exynos_camera->config->presets[id].params.max_num_focus_areas > 0) {
 		exynos_param_string_set(exynos_camera, "focus-areas",
 			exynos_camera->config->presets[id].params.focus_areas);
+		sprintf(exynos_camera->raw_focus_areas,"%s",
+			exynos_camera->config->presets[id].params.focus_areas);
 		exynos_param_int_set(exynos_camera, "max-num-focus-areas",
 			exynos_camera->config->presets[id].params.max_num_focus_areas);
 	}
@@ -588,6 +590,28 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 	return 0;
 }
 
+static int validate_focus_areas(int l, int t, int r, int b, int w) {
+	if (!(l || r || t || b || w)) {
+		// All zeros is a valid area
+		return 0;
+	}
+
+	// If existing, a focus area must be contained between -1000 and 1000,
+	// on both dimensions
+	if (l < -1000 || t < -1000 || r > 1000 || b > 1000) {
+		return -EINVAL;
+	}
+	// No superimposed or reverted edges
+	if (l >= r || t >= b) {
+		return -EINVAL;
+	}
+	// If there's an area defined, weight must be positive and up to 1000
+	if ((l !=0 || r !=0) && (w < 1 || w > 1000)) {
+		return -EINVAL;
+	}
+	return 0;
+}
+
 int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 {
 	char *recording_hint_string;
@@ -622,7 +646,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	char *focus_mode_string;
 	int focus_mode = 0;
 	char *focus_areas_string;
-	int focus_left, focus_top, focus_right, focus_bottom, focus_weigth;
+	int focus_left, focus_top, focus_right, focus_bottom, focus_weight;
 	int focus_x;
 	int focus_y;
 
@@ -852,13 +876,18 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	focus_areas_string = exynos_param_string_get(exynos_camera, "focus-areas");
 	if (focus_areas_string != NULL) {
-		focus_left = focus_top = focus_right = focus_bottom = focus_weigth = 0;
+		focus_left = focus_top = focus_right = focus_bottom = focus_weight = 0;
 
 		rc = sscanf(focus_areas_string, "(%d,%d,%d,%d,%d)",
-			&focus_left, &focus_top, &focus_right, &focus_bottom, &focus_weigth);
+			&focus_left, &focus_top, &focus_right, &focus_bottom, &focus_weight);
 		if (rc != 5) {
 			ALOGE("%s: Unable to scan focus areas", __func__);
-		} else if (focus_left != 0 && focus_top != 0 && focus_right != 0 && focus_bottom != 0) {
+		} else if (validate_focus_areas(focus_left, focus_top, focus_right, focus_bottom, focus_weight) != 0 || strstr(focus_areas_string, "),(")) {
+			exynos_param_string_set(exynos_camera, "focus-areas",
+				exynos_camera->raw_focus_areas);
+			return -EINVAL;
+		} else if ((focus_left != 0 || focus_right != 0) && (focus_top != 0 || focus_bottom != 0)) {
+                        sprintf(exynos_camera->raw_focus_areas,"%s",focus_areas_string);
 			focus_x = (((focus_left + focus_right) / 2) + 1000) * preview_width / 2000;
 			focus_y =  (((focus_top + focus_bottom) / 2) + 1000) * preview_height / 2000;
 
@@ -3750,7 +3779,7 @@ int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
 
 	if (exynos_camera->auto_focus_thread_enabled) {
 		ALOGE("Auto-focus thread was already started!");
-		return -1;
+		return 0;
 	}
 
 	pthread_mutex_init(&exynos_camera->auto_focus_mutex, NULL);

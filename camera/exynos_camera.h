@@ -429,6 +429,7 @@ struct exynos_camera {
 	int iso;
 	int metering;
 	int image_stabilization;
+	char raw_focus_areas[PAGE_SIZE];
 };
 
 struct exynos_camera_addrs {
