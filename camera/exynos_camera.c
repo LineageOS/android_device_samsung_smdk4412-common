@@ -4238,6 +4238,13 @@ int exynos_camera_send_command(struct camera_device *dev,
 	int32_t cmd, int32_t arg1, int32_t arg2)
 {
 	ALOGD("%s(%p, %d, %d, %d)", __func__, dev, cmd, arg1, arg2);
+	switch (cmd) {
+		case CAMERA_CMD_START_FACE_DETECTION:
+			return -EINVAL;
+			break;
+		default:
+			break;
+	}
 
 	return 0;
 }
