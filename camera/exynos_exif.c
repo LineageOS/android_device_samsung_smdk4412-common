@@ -195,6 +195,7 @@ int exynos_exif_attributes_create_gps(struct exynos_camera *exynos_camera,
 	snprintf((char *) attributes->gps_datestamp, sizeof(attributes->gps_datestamp),
 		"%04d:%02d:%02d", time_info.tm_year + 1900, time_info.tm_mon + 1, time_info.tm_mday);
 
+	strcpy((char *) attributes->gps_processing_method, gps_processing_method_string);
 	attributes->enableGps = true;
 
 	return 0;
@@ -422,6 +423,8 @@ int exynos_exif_start(struct exynos_camera *exynos_camera, struct exynos_exif *e
 		ALOGE("Exif was already started");
 		return -1;
 	}
+
+	memset(&exif->attributes, 0, sizeof(exif_attribute_t));
 
 	rc = exynos_exif_attributes_create_static(exynos_camera, exif);
 	if (rc < 0) {

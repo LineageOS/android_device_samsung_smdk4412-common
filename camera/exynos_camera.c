@@ -4237,6 +4237,15 @@ int exynos_camera_set_parameters(struct camera_device *dev,
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
+	if (strstr(params, "gps-timestamp=") == NULL) {
+		/* Make sure the GPS data is ignored, it may have
+		 * been explicitly erased with removeGpsData()
+		 */
+		exynos_param_int_set(exynos_camera, "gps-timestamp", -1);
+		exynos_param_int_set(exynos_camera, "gps-latitude", -1);
+		exynos_param_int_set(exynos_camera, "gps-longitude", -1);
+	}
+
 	rc = exynos_params_string_set(exynos_camera, (char *) params);
 	if (rc < 0) {
 		ALOGE("%s: Unable to set params string", __func__);
