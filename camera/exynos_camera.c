@@ -700,6 +700,13 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	if (preview_size_string != NULL) {
 		sscanf(preview_size_string, "%dx%d", &preview_width, &preview_height);
 
+		if (preview_width < 0 && preview_height < 0) {
+			char reset_preview[128];
+			sprintf(reset_preview, "%dx%d", exynos_camera->preview_width, exynos_camera->preview_height);
+			exynos_param_string_set(exynos_camera, "preview-size",
+				reset_preview);
+			return -EINVAL;
+		}
 		if (preview_width != 0 && preview_width != exynos_camera->preview_width)
 			exynos_camera->preview_width = preview_width;
 		if (preview_height != 0 && preview_height != exynos_camera->preview_height)
@@ -928,8 +935,11 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
 			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
 				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
-			else
-				focus_mode = FOCUS_MODE_AUTO;
+			else {
+				exynos_param_string_set(exynos_camera, "focus-mode",
+					exynos_camera->raw_focus_mode);
+				return -EINVAL;
+			}
 		}
 
 		if (focus_mode != exynos_camera->focus_mode || force) {
@@ -939,6 +949,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		}
 
 		exynos_camera->focus_mode = focus_mode;
+		sprintf(exynos_camera->raw_focus_mode, "%s", focus_mode_string);
 	}
 
 	// Zoom
@@ -952,6 +963,9 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_ZOOM, zoom);
 			if (rc < 0)
 				ALOGE("%s: Unable to set camera zoom", __func__);
+		} else if (zoom > max_zoom) {
+			exynos_param_int_set(exynos_camera, "zoom", max_zoom);
+			return -EINVAL;
 		}
 
 	}
@@ -995,11 +1009,15 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			flash_mode = FLASH_MODE_ON;
 		else if (strcmp(flash_mode_string, "torch") == 0)
 			flash_mode = FLASH_MODE_TORCH;
-		else
-			flash_mode = FLASH_MODE_AUTO;
+		else {
+			exynos_param_string_set(exynos_camera, "flash-mode",
+				exynos_camera->raw_flash_mode);
+			return -EINVAL;
+		}
 
 		if (flash_mode != exynos_camera->flash_mode || force) {
 			exynos_camera->flash_mode = flash_mode;
+			sprintf(exynos_camera->raw_flash_mode, "%s", flash_mode_string);
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FLASH_MODE, flash_mode);
 			if (rc < 0)
 				ALOGE("%s:Unable to set flash mode", __func__);
