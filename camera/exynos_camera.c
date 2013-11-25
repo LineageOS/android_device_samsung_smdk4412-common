@@ -1230,8 +1230,10 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 int s5c73m3_interleaved_decode(void *data, int size,
 	void *yuv_data, int *yuv_size, int yuv_width, int yuv_height,
-	void *jpeg_data, int *jpeg_size, int *decoded, int *auto_focus_result)
+	void *jpeg_data, int *jpeg_size, int *decoded, int *auto_focus_result,
+	struct exynos_exif *exif)
 {
+	exif_attribute_t *attributes;
 	int yuv_length;
 	int jpeg_length;
 	unsigned char *yuv_p;
@@ -1301,6 +1303,32 @@ int s5c73m3_interleaved_decode(void *data, int size,
 
 	if (!*decoded)
 		return 0;
+
+	attributes = &exif->attributes;
+
+	//Extract the EXIF from the Metadata
+	//Flash
+	data_p = (unsigned char *) data;
+	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
+	data_p += 4; // EXIF Flash Offset
+	attributes->flash = (int) data_p[0];
+
+	//ISO
+	data_p += 4; // EXIF ISO Offset
+	attributes->iso_speed_rating = (data_p[1] << 8) + data_p[0];
+
+	//Exposure
+	data_p += 4; // EXIF Exposure Offset
+	attributes->brightness.num = (int) data_p[0];
+
+	//Exposure Bias
+	data_p += 4; // EXIF Exposure Bias Offset
+	attributes->exposure_bias.num = (data_p[1] << 8) + data_p[0];
+
+	//Exposure Time
+	data_p += 8; // EXIF Exposure Time Offset
+	attributes->exposure_time.den = (data_p[1] << 8) + data_p[0];
+
 
 	ALOGD("%s: Interleaved pointers array is at offset 0x%x, 0x%x bytes long\n", __func__, pointers_array_offset, pointers_array_size);
 
@@ -1446,7 +1474,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			yuv_length = jpeg_length = 0;
 			auto_focus_result = decoded = 0;
 
-			rc = s5c73m3_interleaved_decode(pointer, buffer_length, exynos_camera->capture_yuv_buffer, &yuv_length, width, height, exynos_camera->capture_jpeg_buffer, &jpeg_length, &decoded, &auto_focus_result);
+			rc = s5c73m3_interleaved_decode(pointer, buffer_length, exynos_camera->capture_yuv_buffer, &yuv_length, width, height, exynos_camera->capture_jpeg_buffer, &jpeg_length, &decoded, &auto_focus_result, &exynos_camera->exif);
 			if (rc < 0) {
 				ALOGE("%s: Unable to decode S5C73M3 interleaved", __func__);
 				goto error;
@@ -1505,6 +1533,8 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 				buffer->format = V4L2_PIX_FMT_JPEG;
 
 				exynos_camera->capture_hybrid = 0;
+
+				exynos_exif_create(exynos_camera, &exynos_camera->exif);
 			}
 			break;
 		case V4L2_PIX_FMT_JPEG:
@@ -1555,6 +1585,9 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			buffer->width = exynos_camera->jpeg_thumbnail_width;
 			buffer->height = exynos_camera->jpeg_thumbnail_height;
 			buffer->format = V4L2_PIX_FMT_JPEG;
+
+			exynos_exif_create(exynos_camera, &exynos_camera->exif);
+
 			break;
 		default:
 			buffers_count = 1;
@@ -1942,6 +1975,10 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 		exynos_camera->capture_jpeg_buffer = malloc(buffer_length);
 	}
 
+	// Start EXIF
+	memset(&exynos_camera->exif, 0, sizeof(exynos_camera->exif));
+	exynos_exif_start(exynos_camera, &exynos_camera->exif);
+
 	for (i = 0; i < buffers_count; i++) {
 		rc = exynos_v4l2_qbuf_cap(exynos_camera, 0, i);
 		if (rc < 0) {
@@ -2039,6 +2076,9 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 		free(exynos_camera->capture_jpeg_buffer);
 		exynos_camera->capture_jpeg_buffer = NULL;
 	}
+
+	exynos_exif_stop(exynos_camera, &exynos_camera->exif);
+	free(&exynos_camera->exif);
 
 	exynos_camera->capture_enabled = 0;
 }
@@ -2762,7 +2802,6 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	struct exynos_camera_buffer *yuv_thumbnail_buffer;
 	struct exynos_v4l2_output output;
 	struct exynos_jpeg jpeg;
-	struct exynos_exif exif;
 	int output_enabled = 0;
 	int width, height, format;
 	int buffer_width, buffer_height, buffer_format, buffer_address;
@@ -3022,24 +3061,16 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	}
 
 	// EXIF
+	exynos_camera->exif.jpeg_thumbnail_data = jpeg_thumbnail_data;
+	exynos_camera->exif.jpeg_thumbnail_size = jpeg_thumbnail_size;
 
-	memset(&exif, 0, sizeof(exif));
-	exif.jpeg_thumbnail_data = jpeg_thumbnail_data;
-	exif.jpeg_thumbnail_size = jpeg_thumbnail_size;
-
-	rc = exynos_exif_start(exynos_camera, &exif);
-	if (rc < 0) {
-		ALOGE("%s: Unable to start exif", __func__);
-		goto error;
-	}
-
-	rc = exynos_exif(exynos_camera, &exif);
+	rc = exynos_exif(exynos_camera, &exynos_camera->exif);
 	if (rc < 0) {
 		ALOGE("%s: Unable to exif", __func__);
 		goto error;
 	}
 
-	memory_size = exif.memory_size + jpeg_size;
+	memory_size = exynos_camera->exif.memory_size + jpeg_size;
 
 	if (EXYNOS_CAMERA_CALLBACK_DEFINED(request_memory)) {
 		memory = exynos_camera->callbacks.request_memory(-1, memory_size, 1, exynos_camera->callbacks.user);
@@ -3059,13 +3090,11 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	p += 2;
 
 	// Copy the EXIF data
-	memcpy(p, exif.memory->data, exif.memory_size);
-	p += exif.memory_size;
+	memcpy(p, exynos_camera->exif.memory->data, exynos_camera->exif.memory_size);
+	p += exynos_camera->exif.memory_size;
 
 	// Copy the JPEG picture
 	memcpy(p, (void *) ((unsigned char *) jpeg_data + 2), jpeg_size - 2);
-
-	exynos_exif_stop(exynos_camera, &exif);
 
 	exynos_camera->picture_memory = memory;
 
