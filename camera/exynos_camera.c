@@ -663,7 +663,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	int aeawb = 0;
 
 	char *flash_mode_string;
-	int flash_mode;
+	int flash_mode = 0;
 
 	int exposure_compensation;
 	int min_exposure_compensation;
@@ -918,40 +918,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		}
 	}
 
-	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
-	if (focus_mode_string != NULL) {
-		if (focus_mode == 0) {
-			if (strcmp(focus_mode_string, "auto") == 0)
-				focus_mode = FOCUS_MODE_AUTO;
-			else if (strcmp(focus_mode_string, "infinity") == 0)
-				focus_mode = FOCUS_MODE_INFINITY;
-			else if (strcmp(focus_mode_string, "macro") == 0)
-				focus_mode = FOCUS_MODE_MACRO;
-			else if (strcmp(focus_mode_string, "fixed") == 0)
-				focus_mode = FOCUS_MODE_FIXED;
-			else if (strcmp(focus_mode_string, "facedetect") == 0)
-				focus_mode = FOCUS_MODE_FACEDETECT;
-			else if (strcmp(focus_mode_string, "continuous-video") == 0)
-				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
-			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
-				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
-			else {
-				exynos_param_string_set(exynos_camera, "focus-mode",
-					exynos_camera->raw_focus_mode);
-				return -EINVAL;
-			}
-		}
-
-		if (focus_mode != exynos_camera->focus_mode || force) {
-			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
-			if (rc < 0)
-				ALOGE("%s: Unable to set focus mode", __func__);
-		}
-
-		exynos_camera->focus_mode = focus_mode;
-		sprintf(exynos_camera->raw_focus_mode, "%s", focus_mode_string);
-	}
-
 	// Zoom
 
 	zoom_supported_string = exynos_param_string_get(exynos_camera, "zoom-supported");
@@ -997,22 +963,78 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			ALOGE("%s: Unable to set AEAWB lock", __func__);
 	}
 
+	// Scene mode
+
+	scene_mode_string = exynos_param_string_get(exynos_camera, "scene-mode");
+	if (scene_mode_string != NULL) {
+		if (strcmp(scene_mode_string, "auto") == 0)
+			scene_mode = SCENE_MODE_NONE;
+		else if (strcmp(scene_mode_string, "portrait") == 0) {
+			scene_mode = SCENE_MODE_PORTRAIT;
+			flash_mode = FLASH_MODE_AUTO;
+		} else if (strcmp(scene_mode_string, "landscape") == 0)
+			scene_mode = SCENE_MODE_LANDSCAPE;
+		else if (strcmp(scene_mode_string, "night") == 0)
+			scene_mode = SCENE_MODE_NIGHTSHOT;
+		else if (strcmp(scene_mode_string, "beach") == 0)
+			scene_mode = SCENE_MODE_BEACH_SNOW;
+		else if (strcmp(scene_mode_string, "snow") == 0)
+			scene_mode = SCENE_MODE_BEACH_SNOW;
+		else if (strcmp(scene_mode_string, "sunset") == 0)
+			scene_mode = SCENE_MODE_SUNSET;
+		else if (strcmp(scene_mode_string, "fireworks") == 0)
+			scene_mode = SCENE_MODE_FIREWORKS;
+		else if (strcmp(scene_mode_string, "sports") == 0)
+			scene_mode = SCENE_MODE_SPORTS;
+		else if (strcmp(scene_mode_string, "party") == 0) {
+			scene_mode = SCENE_MODE_PARTY_INDOOR;
+			flash_mode = FLASH_MODE_AUTO;
+		} else if (strcmp(scene_mode_string, "candlelight") == 0)
+			scene_mode = SCENE_MODE_CANDLE_LIGHT;
+		else if (strcmp(scene_mode_string, "dusk-dawn") == 0)
+			scene_mode = SCENE_MODE_DUSK_DAWN;
+		else if (strcmp(scene_mode_string, "fall-color") == 0)
+			scene_mode = SCENE_MODE_FALL_COLOR;
+		else if (strcmp(scene_mode_string, "back-light") == 0)
+			scene_mode = SCENE_MODE_BACK_LIGHT;
+		else if (strcmp(scene_mode_string, "text") == 0)
+			scene_mode = SCENE_MODE_TEXT;
+		else if (strcmp(scene_mode_string, "high-sensitivity") == 0)
+			scene_mode = SCENE_MODE_LOW_LIGHT;
+		else
+			scene_mode = SCENE_MODE_NONE;
+
+		if (scene_mode != exynos_camera->scene_mode || force) {
+			exynos_camera->scene_mode = scene_mode;
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, scene_mode);
+			if (rc < 0)
+				ALOGE("%s: Unable to set scene mode", __func__);
+		}
+
+		if (scene_mode != SCENE_MODE_NONE && !flash_mode && !focus_mode) {
+			flash_mode = FLASH_MODE_OFF;
+			focus_mode = FOCUS_MODE_AUTO;
+		}
+	}
+
 	// Flash
 
 	flash_mode_string = exynos_param_string_get(exynos_camera, "flash-mode");
 	if (flash_mode_string != NULL) {
-		if (strcmp(flash_mode_string, "off") == 0)
-			flash_mode = FLASH_MODE_OFF;
-		else if (strcmp(flash_mode_string, "auto") == 0)
-			flash_mode = FLASH_MODE_AUTO;
-		else if (strcmp(flash_mode_string, "on") == 0)
-			flash_mode = FLASH_MODE_ON;
-		else if (strcmp(flash_mode_string, "torch") == 0)
-			flash_mode = FLASH_MODE_TORCH;
-		else {
-			exynos_param_string_set(exynos_camera, "flash-mode",
-				exynos_camera->raw_flash_mode);
-			return -EINVAL;
+		if (flash_mode == 0) {
+			if (strcmp(flash_mode_string, "off") == 0)
+				flash_mode = FLASH_MODE_OFF;
+			else if (strcmp(flash_mode_string, "auto") == 0)
+				flash_mode = FLASH_MODE_AUTO;
+			else if (strcmp(flash_mode_string, "on") == 0)
+				flash_mode = FLASH_MODE_ON;
+			else if (strcmp(flash_mode_string, "torch") == 0)
+				flash_mode = FLASH_MODE_TORCH;
+			else {
+				exynos_param_string_set(exynos_camera, "flash-mode",
+					exynos_camera->raw_flash_mode);
+				return -EINVAL;
+			}
 		}
 
 		if (flash_mode != exynos_camera->flash_mode || force) {
@@ -1022,6 +1044,40 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			if (rc < 0)
 				ALOGE("%s:Unable to set flash mode", __func__);
 		}
+	}
+
+	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
+	if (focus_mode_string != NULL) {
+		if (focus_mode == 0) {
+			if (strcmp(focus_mode_string, "auto") == 0)
+				focus_mode = FOCUS_MODE_AUTO;
+			else if (strcmp(focus_mode_string, "infinity") == 0)
+				focus_mode = FOCUS_MODE_INFINITY;
+			else if (strcmp(focus_mode_string, "macro") == 0)
+				focus_mode = FOCUS_MODE_MACRO;
+			else if (strcmp(focus_mode_string, "fixed") == 0)
+				focus_mode = FOCUS_MODE_FIXED;
+			else if (strcmp(focus_mode_string, "facedetect") == 0)
+				focus_mode = FOCUS_MODE_FACEDETECT;
+			else if (strcmp(focus_mode_string, "continuous-video") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
+			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
+			else {
+				exynos_param_string_set(exynos_camera, "focus-mode",
+					exynos_camera->raw_focus_mode);
+				return -EINVAL;
+			}
+		}
+
+		if (focus_mode != exynos_camera->focus_mode || force) {
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
+			if (rc < 0)
+				ALOGE("%s: Unable to set focus mode", __func__);
+		}
+
+		exynos_camera->focus_mode = focus_mode;
+		sprintf(exynos_camera->raw_focus_mode, "%s", focus_mode_string);
 	}
 
 	// Exposure
@@ -1083,53 +1139,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_WHITE_BALANCE, whitebalance);
 			if (rc < 0)
 				ALOGE("%s: Unable to set whitebalance", __func__);
-		}
-	}
-
-	// Scene mode
-
-	scene_mode_string = exynos_param_string_get(exynos_camera, "scene-mode");
-	if (scene_mode_string != NULL) {
-		if (strcmp(scene_mode_string, "auto") == 0)
-			scene_mode = SCENE_MODE_NONE;
-		else if (strcmp(scene_mode_string, "portrait") == 0)
-			scene_mode = SCENE_MODE_PORTRAIT;
-		else if (strcmp(scene_mode_string, "landscape") == 0)
-			scene_mode = SCENE_MODE_LANDSCAPE;
-		else if (strcmp(scene_mode_string, "night") == 0)
-			scene_mode = SCENE_MODE_NIGHTSHOT;
-		else if (strcmp(scene_mode_string, "beach") == 0)
-			scene_mode = SCENE_MODE_BEACH_SNOW;
-		else if (strcmp(scene_mode_string, "snow") == 0)
-			scene_mode = SCENE_MODE_BEACH_SNOW;
-		else if (strcmp(scene_mode_string, "sunset") == 0)
-			scene_mode = SCENE_MODE_SUNSET;
-		else if (strcmp(scene_mode_string, "fireworks") == 0)
-			scene_mode = SCENE_MODE_FIREWORKS;
-		else if (strcmp(scene_mode_string, "sports") == 0)
-			scene_mode = SCENE_MODE_SPORTS;
-		else if (strcmp(scene_mode_string, "party") == 0)
-			scene_mode = SCENE_MODE_PARTY_INDOOR;
-		else if (strcmp(scene_mode_string, "candlelight") == 0)
-			scene_mode = SCENE_MODE_CANDLE_LIGHT;
-		else if (strcmp(scene_mode_string, "dusk-dawn") == 0)
-			scene_mode = SCENE_MODE_DUSK_DAWN;
-		else if (strcmp(scene_mode_string, "fall-color") == 0)
-			scene_mode = SCENE_MODE_FALL_COLOR;
-		else if (strcmp(scene_mode_string, "back-light") == 0)
-			scene_mode = SCENE_MODE_BACK_LIGHT;
-		else if (strcmp(scene_mode_string, "text") == 0)
-			scene_mode = SCENE_MODE_TEXT;
-		else if (strcmp(scene_mode_string, "high-sensitivity") == 0)
-			scene_mode = SCENE_MODE_LOW_LIGHT;
-		else
-			scene_mode = SCENE_MODE_NONE;
-
-		if (scene_mode != exynos_camera->scene_mode || force) {
-			exynos_camera->scene_mode = scene_mode;
-			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, scene_mode);
-			if (rc < 0)
-				ALOGE("%s: Unable to set scene mode", __func__);
 		}
 	}
 
