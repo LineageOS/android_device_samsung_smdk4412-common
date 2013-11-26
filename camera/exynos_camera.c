@@ -2017,6 +2017,13 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 		goto error;
 	}
 
+	// Few Scene Modes require to be set after stream on
+	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, exynos_camera->scene_mode);
+	if (rc < 0) {
+		ALOGE("%s: Unable to set scene mode", __func__);
+		goto error;
+	}
+
 	exynos_camera->capture_enabled = 1;
 	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
