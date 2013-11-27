@@ -318,7 +318,7 @@ struct exynos_camera {
 	int capture_memory_index;
 	void *capture_yuv_buffer;
 	void *capture_jpeg_buffer;
-	int capture_auto_focus_result;
+	int auto_focus_result;
 	int capture_hybrid;
 	int capture_width;
 	int capture_height;
@@ -377,10 +377,7 @@ struct exynos_camera {
 
 	// Auto-focus
 
-	pthread_t auto_focus_thread;
-	pthread_mutex_t auto_focus_mutex;
-	int auto_focus_thread_enabled;
-	int auto_focus_thread_running;
+	int auto_focus_enabled;
 
 	// Camera params
 
@@ -509,8 +506,9 @@ void exynos_camera_recording_thread_stop(struct exynos_camera *exynos_camera);
 
 // Auto-focus
 int exynos_camera_auto_focus(struct exynos_camera *exynos_camera, int auto_focus_status);
-int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera);
-void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera);
+int exynos_camera_auto_focus_start(struct exynos_camera *exynos_camera);
+void exynos_camera_auto_focus_finish(struct exynos_camera *exynos_camera);
+void exynos_camera_auto_focus_stop(struct exynos_camera *exynos_camera);
 
 /*
  * EXIF
