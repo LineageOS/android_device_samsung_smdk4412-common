@@ -913,8 +913,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				if (rc < 0)
 					ALOGE("%s: Unable to set object y position", __func__);
 			}
-
-			focus_mode = FOCUS_MODE_TOUCH;
 		}
 	}
 
@@ -953,15 +951,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 		awb_lock = 1;
 	else
 		awb_lock = 0;
-
-	if (ae_lock != exynos_camera->ae_lock || awb_lock != exynos_camera->awb_lock || force) {
-		exynos_camera->ae_lock = ae_lock;
-		exynos_camera->awb_lock = awb_lock;
-		aeawb = (ae_lock ? 0x1 : 0x0) | (awb_lock ? 0x2 : 0x0);
-		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, aeawb);
-		if (rc < 0)
-			ALOGE("%s: Unable to set AEAWB lock", __func__);
-	}
 
 	// Scene mode
 
@@ -1044,6 +1033,17 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			if (rc < 0)
 				ALOGE("%s:Unable to set flash mode", __func__);
 		}
+	}
+
+	// Lock Auto Exposure and White Balance only when Flash is OFF
+	if ((ae_lock != exynos_camera->ae_lock || awb_lock != exynos_camera->awb_lock || force) &&
+			exynos_camera->flash_mode == FLASH_MODE_OFF) {
+		exynos_camera->ae_lock = ae_lock;
+		exynos_camera->awb_lock = awb_lock;
+		aeawb = (ae_lock ? 0x1 : 0x0) | (awb_lock ? 0x2 : 0x0);
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, aeawb);
+		if (rc < 0)
+			ALOGE("%s: Unable to set AEAWB lock", __func__);
 	}
 
 	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
@@ -1276,25 +1276,7 @@ int s5c73m3_interleaved_decode(void *data, int size,
 	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
 	data_p += 50; // Experimental offset for auto-focus result
 
-	s5c73m3_auto_focus_result = *data_p;
-
-	switch (s5c73m3_auto_focus_result) {
-		case S5C73M3_CAF_STATUS_FOCUSING:
-		case S5C73M3_CAF_STATUS_FIND_SEARCHING_DIR:
-		case S5C73M3_AF_STATUS_INVALID:
-			*auto_focus_result = CAMERA_AF_STATUS_IN_PROGRESS;
-		break;
-		case S5C73M3_AF_STATUS_FOCUSED:
-		case S5C73M3_CAF_STATUS_FOCUSED:
-			*auto_focus_result = CAMERA_AF_STATUS_SUCCESS;
-		break;
-
-		case S5C73M3_CAF_STATUS_UNFOCUSED:
-		case S5C73M3_AF_STATUS_UNFOCUSED:
-		default:
-			*auto_focus_result = CAMERA_AF_STATUS_FAIL;
-		break;
-	}
+	*auto_focus_result = (int) *data_p;
 
 	data_p = (unsigned char *) data;
 	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
@@ -1423,6 +1405,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	int buffers_count;
 	int buffer_length;
 	int auto_focus_result;
+	int current_af;
 	int decoded;
 	int busy;
 	void *pointer;
@@ -1489,11 +1472,30 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 				goto error;
 			}
 
-			if (auto_focus_result != exynos_camera->capture_auto_focus_result) {
-				exynos_camera->capture_auto_focus_result = auto_focus_result;
+			// AutoFocus
+			switch (auto_focus_result) {
+				case S5C73M3_CAF_STATUS_FOCUSING:
+				case S5C73M3_CAF_STATUS_FIND_SEARCHING_DIR:
+				case S5C73M3_AF_STATUS_FOCUSING:
+					current_af = CAMERA_AF_STATUS_IN_PROGRESS;
+					break;
+				case S5C73M3_CAF_STATUS_FOCUSED:
+				case S5C73M3_AF_STATUS_FOCUSED:
+					current_af = CAMERA_AF_STATUS_SUCCESS;
+					break;
+				case S5C73M3_CAF_STATUS_UNFOCUSED:
+				case S5C73M3_AF_STATUS_UNFOCUSED:
+					current_af = CAMERA_AF_STATUS_FAIL;
+					break;
+				case S5C73M3_AF_STATUS_INVALID:
+				default:
+					current_af = CAMERA_AF_STATUS_RESTART;
+			}
 
-				if (!exynos_camera->auto_focus_thread_enabled) {
-					rc = exynos_camera_auto_focus(exynos_camera, auto_focus_result);
+			if (current_af != exynos_camera->auto_focus_result) {
+				exynos_camera->auto_focus_result = current_af;
+				if (exynos_camera->auto_focus_enabled) {
+					rc = exynos_camera_auto_focus(exynos_camera, current_af);
 					if (rc < 0) {
 						ALOGE("%s: Unable to auto focus", __func__);
 						goto error;
@@ -2706,12 +2708,10 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 	pthread_mutex_lock(&exynos_camera->picture_mutex);
 
 	if (!exynos_camera->picture_enabled && !exynos_camera->camera_fimc_is) {
-#if 0
-		if (exynos_camera->focus_mode == FOCUS_MODE_CONTINOUS_PICTURE && exynos_camera->capture_auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
+		if (exynos_camera->auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
 			pthread_mutex_unlock(&exynos_camera->picture_mutex);
 			return 0;
 		}
-#endif
 
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_CAPTURE, 0);
 		if (rc < 0) {
@@ -3769,69 +3769,20 @@ int exynos_camera_auto_focus(struct exynos_camera *exynos_camera, int auto_focus
 		case CAMERA_AF_STATUS_SUCCESS:
 			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
 				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 1, 0, exynos_camera->callbacks.user);
+			exynos_camera_auto_focus_finish(exynos_camera);
 			break;
 		case CAMERA_AF_STATUS_FAIL:
-		default:
 			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
 				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 0, 0, exynos_camera->callbacks.user);
+			exynos_camera_auto_focus_finish(exynos_camera);
 			break;
 	}
 
 	return 0;
 }
 
-void *exynos_camera_auto_focus_thread(void *data)
+int exynos_camera_auto_focus_start(struct exynos_camera *exynos_camera)
 {
-	struct exynos_camera *exynos_camera;
-	int auto_focus_status = CAMERA_AF_STATUS_FAIL;
-	int auto_focus_completed = 0;
-	int rc;
-
-	if (data == NULL)
-		return NULL;
-
-	exynos_camera = (struct exynos_camera *) data;
-
-	ALOGE("%s: Starting thread", __func__);
-	exynos_camera->auto_focus_thread_running = 1;
-
-	while (exynos_camera->auto_focus_thread_enabled) {
-		pthread_mutex_lock(&exynos_camera->auto_focus_mutex);
-
-		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AUTO_FOCUS_RESULT, &auto_focus_status);
-		if (rc < 0) {
-			ALOGE("%s: Unable to get auto-focus result", __func__);
-			auto_focus_status = CAMERA_AF_STATUS_FAIL;
-		}
-
-		rc = exynos_camera_auto_focus(exynos_camera, auto_focus_status);
-		if (rc < 0) {
-			ALOGE("%s: Unable to auto-focus", __func__);
-			auto_focus_status = CAMERA_AF_STATUS_FAIL;
-		}
-
-		if (auto_focus_status == CAMERA_AF_STATUS_IN_PROGRESS)
-			usleep(10000);
-		else
-			auto_focus_completed = 1;
-
-		pthread_mutex_unlock(&exynos_camera->auto_focus_mutex);
-
-		if (auto_focus_completed) {
-			exynos_camera->auto_focus_thread_running = 0;
-			exynos_camera_auto_focus_thread_stop(exynos_camera);
-		}
-	}
-
-	exynos_camera->auto_focus_thread_running = 0;
-	ALOGE("%s: Exiting thread", __func__);
-
-	return NULL;
-}
-
-int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
-{
-	pthread_attr_t thread_attr;
 	int auto_focus;
 	int rc;
 
@@ -3839,13 +3790,6 @@ int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
 		return -EINVAL;
 
 	ALOGD("%s()", __func__);
-
-	if (exynos_camera->auto_focus_thread_enabled) {
-		ALOGE("Auto-focus thread was already started!");
-		return 0;
-	}
-
-	pthread_mutex_init(&exynos_camera->auto_focus_mutex, NULL);
 
 	auto_focus = AUTO_FOCUS_ON | (exynos_camera->preview_width & 0xfff) << 20 | (exynos_camera->preview_height & 0xfff) << 8;
 
@@ -3855,22 +3799,12 @@ int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
 		goto error;
 	}
 
-	pthread_attr_init(&thread_attr);
-	pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
-
-	exynos_camera->auto_focus_thread_enabled = 1;
-
-	rc = pthread_create(&exynos_camera->auto_focus_thread, &thread_attr, exynos_camera_auto_focus_thread, (void *) exynos_camera);
-	if (rc < 0) {
-		ALOGE("%s: Unable to create thread", __func__);
-		goto error;
-	}
+	exynos_camera->auto_focus_enabled = 1;
 
 	rc = 0;
 	goto complete;
 
 error:
-	pthread_mutex_destroy(&exynos_camera->auto_focus_mutex);
 
 	rc = -1;
 
@@ -3878,7 +3812,24 @@ complete:
 	return rc;
 }
 
-void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera)
+void exynos_camera_auto_focus_finish(struct exynos_camera *exynos_camera)
+{
+	int rc;
+
+	ALOGD("%s()", __func__);
+
+	if (!exynos_camera->auto_focus_enabled) {
+		return 0;
+	}
+
+	exynos_camera->auto_focus_enabled = 0;
+
+	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, AE_UNLOCK_AWB_UNLOCK);
+	if (rc < 0)
+		ALOGE("%s: Unable to set AEAWB lock", __func__);
+}
+
+void exynos_camera_auto_focus_stop(struct exynos_camera *exynos_camera)
 {
 	int rc;
 	int i;
@@ -3888,28 +3839,13 @@ void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera)
 
 	ALOGD("%s()", __func__);
 
-	if (!exynos_camera->auto_focus_thread_enabled) {
-		ALOGE("Auto-focus thread was already stopped!");
-		return;
-	}
-
-	exynos_camera->auto_focus_thread_enabled = 0;
-
-	// Wait for the thread to end
-	i = 0;
-	while (exynos_camera->auto_focus_thread_running) {
-		if (i++ > 10000) {
-			ALOGE("Auto-focus thread is taking too long to end, something is going wrong");
-			break;
-		}
-		usleep(100);
-	}
-
 	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SET_AUTO_FOCUS, AUTO_FOCUS_OFF);
 	if (rc < 0)
 		ALOGE("%s: Unable to set auto-focus off", __func__);
 
-	pthread_mutex_destroy(&exynos_camera->auto_focus_mutex);
+	if (exynos_camera->auto_focus_enabled)
+		exynos_camera_auto_focus_finish(exynos_camera);
+
 }
 
 /*
@@ -4206,7 +4142,7 @@ int exynos_camera_start_auto_focus(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	return exynos_camera_auto_focus_thread_start(exynos_camera);
+	return exynos_camera_auto_focus_start(exynos_camera);
 }
 
 int exynos_camera_cancel_auto_focus(struct camera_device *dev)
@@ -4220,7 +4156,7 @@ int exynos_camera_cancel_auto_focus(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	exynos_camera_auto_focus_thread_stop(exynos_camera);
+	exynos_camera_auto_focus_stop(exynos_camera);
 
 	return 0;
 }
@@ -4237,8 +4173,7 @@ int exynos_camera_take_picture(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	if (exynos_camera->picture_thread_running
-		|| exynos_camera->auto_focus_thread_enabled)
+	if (exynos_camera->picture_thread_running)
 	{
 		return 0;
 	}
