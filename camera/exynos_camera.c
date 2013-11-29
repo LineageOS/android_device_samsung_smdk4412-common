@@ -90,7 +90,7 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.picture_format = "jpeg",
 			.jpeg_thumbnail_size_values = "160x120,160x90,144x96",
 			.jpeg_thumbnail_width = 160,
-			.jpeg_thumbnail_height = 160,
+			.jpeg_thumbnail_height = 120,
 			.jpeg_thumbnail_quality = 100,
 			.jpeg_quality = 90,
 
