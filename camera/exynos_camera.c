@@ -172,7 +172,7 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.preview_fps_range_values = "(8000,8000),(15000,15000),(15000,30000),(30000,30000)",
 			.preview_fps_range = "15000,30000",
 
-			.picture_size_values = "1344x756,1280x720,1392x1044,1280x960,960x720,640x480,1392x1392",
+			.picture_size_values = "1280x960,1392x1392,640x480,1280x720,720x480,320x240",
 			.picture_size = "1280x960",
 			.picture_format_values = "jpeg",
 			.picture_format = "jpeg",
@@ -1597,8 +1597,6 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			buffer->height = exynos_camera->jpeg_thumbnail_height;
 			buffer->format = V4L2_PIX_FMT_JPEG;
 
-			exynos_exif_create(exynos_camera, &exynos_camera->exif);
-
 			break;
 		default:
 			buffers_count = 1;
@@ -2213,10 +2211,12 @@ struct exynos_camera_capture_listener *exynos_camera_capture_listener_register(
 	if (exynos_camera->capture_listeners == NULL)
 		exynos_camera->capture_listeners = listener;
 
-	rc = exynos_camera_capture_setup(exynos_camera);
-	if (rc < 0) {
-		ALOGE("%s: Unable to setup capture", __func__);
-		goto error;
+	if (!(exynos_camera->camera_fimc_is && exynos_camera->picture_thread_enabled)) {
+		rc = exynos_camera_capture_setup(exynos_camera);
+		if (rc < 0) {
+			ALOGE("%s: Unable to setup capture", __func__);
+			goto error;
+		}
 	}
 
 	rc = 0;
@@ -2748,7 +2748,7 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 			else if (buffers->width == thumbnail_width && buffers->height == thumbnail_height)
 				jpeg_thumbnail_buffer = buffers;
 		} else {
-			if (buffers->width >= width && buffers->height >= height)
+			if ((buffers->width >= width && buffers->height >= height) || exynos_camera->camera_fimc_is)
 				yuv_buffer = buffers;
 			if (buffers->width >= thumbnail_width && buffers->height >= thumbnail_height)
 				yuv_thumbnail_buffer = buffers;
@@ -2887,7 +2887,7 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 		buffer_format = yuv_buffer->format;
 		buffer_address = yuv_buffer->address;
 
-		if (width != buffer_width && height != buffer_height) {
+		if ((width != buffer_width && height != buffer_height) || exynos_camera->camera_fimc_is) {
 			format = EXYNOS_CAMERA_PICTURE_OUTPUT_FORMAT;
 
 			memset(&output, 0, sizeof(output));
@@ -2917,6 +2917,9 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 			yuv_data = output.memory->data;
 			yuv_address = output.memory_address;
 			yuv_size = output.buffer_length;
+
+			if (exynos_camera->camera_fimc_is)
+				exynos_exif_create(exynos_camera, &exynos_camera->exif);
 		}
 
 		memset(&jpeg, 0, sizeof(jpeg));
