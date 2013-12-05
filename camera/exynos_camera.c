@@ -134,7 +134,7 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.antibanding_values = "off,auto,50hz,60hz",
 
 			.scene_mode = "auto",
-			.scene_mode_values = "auto,portrait,landscape,night,beach,snow,sunset,fireworks,sports,party,candlelight,dusk-dawn,fall-color,text,back-light,high-sensitivity",
+			.scene_mode_values = "auto,portrait,landscape,night,beach,snow,sunset,fireworks,action,party,candlelight,dusk-dawn,fall-color,text,back-light,high-sensitivity",
 
 			.effect = "none",
 			.effect_values = "none,mono,negative,sepia,solarize,posterize,washed,vintage-warm,vintage-cold,point-blue,point-red-yellow,point-green",
@@ -1106,7 +1106,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			scene_mode = SCENE_MODE_SUNSET;
 		else if (strcmp(scene_mode_string, "fireworks") == 0)
 			scene_mode = SCENE_MODE_FIREWORKS;
-		else if (strcmp(scene_mode_string, "sports") == 0)
+		else if (strcmp(scene_mode_string, "action") == 0)
 			scene_mode = SCENE_MODE_SPORTS;
 		else if (strcmp(scene_mode_string, "party") == 0)
 			scene_mode = SCENE_MODE_PARTY_INDOOR;
