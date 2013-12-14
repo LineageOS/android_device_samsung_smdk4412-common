@@ -90,7 +90,7 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.picture_format = "jpeg",
 			.jpeg_thumbnail_size_values = "160x120,160x90,144x96",
 			.jpeg_thumbnail_width = 160,
-			.jpeg_thumbnail_height = 160,
+			.jpeg_thumbnail_height = 120,
 			.jpeg_thumbnail_quality = 100,
 			.jpeg_quality = 90,
 
@@ -106,6 +106,8 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.focus_distances = "0.15,1.20,Infinity",
 			.focus_areas = "(0,0,0,0,0)",
 			.max_num_focus_areas = 1,
+
+			.max_detected_faces = 15,
 
 			.zoom_supported = 1,
 			.smooth_zoom_supported = 0,
@@ -172,7 +174,7 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 			.preview_fps_range_values = "(8000,8000),(15000,15000),(15000,30000),(30000,30000)",
 			.preview_fps_range = "15000,30000",
 
-			.picture_size_values = "1344x756,1280x720,1392x1044,1280x960,960x720,640x480,1392x1392",
+			.picture_size_values = "1280x960,1392x1392,640x480,1280x720,720x480,320x240",
 			.picture_size = "1280x960",
 			.picture_format_values = "jpeg",
 			.picture_format = "jpeg",
@@ -205,6 +207,8 @@ struct exynos_camera_preset exynos_camera_presets_smdk4x12[] = {
 
 			.flash_mode = NULL,
 			.flash_mode_values = NULL,
+
+			.max_detected_faces = 5,
 
 			.exposure_compensation = 0,
 			.exposure_compensation_step = 0.5,
@@ -472,6 +476,11 @@ int exynos_camera_params_init(struct exynos_camera *exynos_camera, int id)
 			exynos_camera->config->presets[id].params.max_num_focus_areas);
 	}
 
+	// Face Detection
+	exynos_camera->max_detected_faces = exynos_camera->config->presets[id].params.max_detected_faces;
+	exynos_param_int_set(exynos_camera, "max-num-detected-faces-hw",
+		exynos_camera->max_detected_faces);
+
 	// Zoom
 
 	if (exynos_camera->config->presets[id].params.zoom_supported == 1) {
@@ -663,7 +672,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	int aeawb = 0;
 
 	char *flash_mode_string;
-	int flash_mode;
+	int flash_mode = 0;
 
 	int exposure_compensation;
 	int min_exposure_compensation;
@@ -913,43 +922,7 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				if (rc < 0)
 					ALOGE("%s: Unable to set object y position", __func__);
 			}
-
-			focus_mode = FOCUS_MODE_TOUCH;
 		}
-	}
-
-	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
-	if (focus_mode_string != NULL) {
-		if (focus_mode == 0) {
-			if (strcmp(focus_mode_string, "auto") == 0)
-				focus_mode = FOCUS_MODE_AUTO;
-			else if (strcmp(focus_mode_string, "infinity") == 0)
-				focus_mode = FOCUS_MODE_INFINITY;
-			else if (strcmp(focus_mode_string, "macro") == 0)
-				focus_mode = FOCUS_MODE_MACRO;
-			else if (strcmp(focus_mode_string, "fixed") == 0)
-				focus_mode = FOCUS_MODE_FIXED;
-			else if (strcmp(focus_mode_string, "facedetect") == 0)
-				focus_mode = FOCUS_MODE_FACEDETECT;
-			else if (strcmp(focus_mode_string, "continuous-video") == 0)
-				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
-			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
-				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
-			else {
-				exynos_param_string_set(exynos_camera, "focus-mode",
-					exynos_camera->raw_focus_mode);
-				return -EINVAL;
-			}
-		}
-
-		if (focus_mode != exynos_camera->focus_mode || force) {
-			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
-			if (rc < 0)
-				ALOGE("%s: Unable to set focus mode", __func__);
-		}
-
-		exynos_camera->focus_mode = focus_mode;
-		sprintf(exynos_camera->raw_focus_mode, "%s", focus_mode_string);
 	}
 
 	// Zoom
@@ -988,31 +961,78 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 	else
 		awb_lock = 0;
 
-	if (ae_lock != exynos_camera->ae_lock || awb_lock != exynos_camera->awb_lock || force) {
-		exynos_camera->ae_lock = ae_lock;
-		exynos_camera->awb_lock = awb_lock;
-		aeawb = (ae_lock ? 0x1 : 0x0) | (awb_lock ? 0x2 : 0x0);
-		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, aeawb);
-		if (rc < 0)
-			ALOGE("%s: Unable to set AEAWB lock", __func__);
+	// Scene mode
+
+	scene_mode_string = exynos_param_string_get(exynos_camera, "scene-mode");
+	if (scene_mode_string != NULL) {
+		if (strcmp(scene_mode_string, "auto") == 0)
+			scene_mode = SCENE_MODE_NONE;
+		else if (strcmp(scene_mode_string, "portrait") == 0) {
+			scene_mode = SCENE_MODE_PORTRAIT;
+			flash_mode = FLASH_MODE_AUTO;
+		} else if (strcmp(scene_mode_string, "landscape") == 0)
+			scene_mode = SCENE_MODE_LANDSCAPE;
+		else if (strcmp(scene_mode_string, "night") == 0)
+			scene_mode = SCENE_MODE_NIGHTSHOT;
+		else if (strcmp(scene_mode_string, "beach") == 0)
+			scene_mode = SCENE_MODE_BEACH_SNOW;
+		else if (strcmp(scene_mode_string, "snow") == 0)
+			scene_mode = SCENE_MODE_BEACH_SNOW;
+		else if (strcmp(scene_mode_string, "sunset") == 0)
+			scene_mode = SCENE_MODE_SUNSET;
+		else if (strcmp(scene_mode_string, "fireworks") == 0)
+			scene_mode = SCENE_MODE_FIREWORKS;
+		else if (strcmp(scene_mode_string, "action") == 0)
+			scene_mode = SCENE_MODE_SPORTS;
+		else if (strcmp(scene_mode_string, "party") == 0) {
+			scene_mode = SCENE_MODE_PARTY_INDOOR;
+			flash_mode = FLASH_MODE_AUTO;
+		} else if (strcmp(scene_mode_string, "candlelight") == 0)
+			scene_mode = SCENE_MODE_CANDLE_LIGHT;
+		else if (strcmp(scene_mode_string, "dusk-dawn") == 0)
+			scene_mode = SCENE_MODE_DUSK_DAWN;
+		else if (strcmp(scene_mode_string, "fall-color") == 0)
+			scene_mode = SCENE_MODE_FALL_COLOR;
+		else if (strcmp(scene_mode_string, "back-light") == 0)
+			scene_mode = SCENE_MODE_BACK_LIGHT;
+		else if (strcmp(scene_mode_string, "text") == 0)
+			scene_mode = SCENE_MODE_TEXT;
+		else if (strcmp(scene_mode_string, "high-sensitivity") == 0)
+			scene_mode = SCENE_MODE_LOW_LIGHT;
+		else
+			scene_mode = SCENE_MODE_NONE;
+
+		if (scene_mode != exynos_camera->scene_mode || force) {
+			exynos_camera->scene_mode = scene_mode;
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, scene_mode);
+			if (rc < 0)
+				ALOGE("%s: Unable to set scene mode", __func__);
+		}
+
+		if (scene_mode != SCENE_MODE_NONE && !flash_mode && !focus_mode) {
+			flash_mode = FLASH_MODE_OFF;
+			focus_mode = FOCUS_MODE_AUTO;
+		}
 	}
 
 	// Flash
 
 	flash_mode_string = exynos_param_string_get(exynos_camera, "flash-mode");
 	if (flash_mode_string != NULL) {
-		if (strcmp(flash_mode_string, "off") == 0)
-			flash_mode = FLASH_MODE_OFF;
-		else if (strcmp(flash_mode_string, "auto") == 0)
-			flash_mode = FLASH_MODE_AUTO;
-		else if (strcmp(flash_mode_string, "on") == 0)
-			flash_mode = FLASH_MODE_ON;
-		else if (strcmp(flash_mode_string, "torch") == 0)
-			flash_mode = FLASH_MODE_TORCH;
-		else {
-			exynos_param_string_set(exynos_camera, "flash-mode",
-				exynos_camera->raw_flash_mode);
-			return -EINVAL;
+		if (flash_mode == 0) {
+			if (strcmp(flash_mode_string, "off") == 0)
+				flash_mode = FLASH_MODE_OFF;
+			else if (strcmp(flash_mode_string, "auto") == 0)
+				flash_mode = FLASH_MODE_AUTO;
+			else if (strcmp(flash_mode_string, "on") == 0)
+				flash_mode = FLASH_MODE_ON;
+			else if (strcmp(flash_mode_string, "torch") == 0)
+				flash_mode = FLASH_MODE_TORCH;
+			else {
+				exynos_param_string_set(exynos_camera, "flash-mode",
+					exynos_camera->raw_flash_mode);
+				return -EINVAL;
+			}
 		}
 
 		if (flash_mode != exynos_camera->flash_mode || force) {
@@ -1022,6 +1042,51 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			if (rc < 0)
 				ALOGE("%s:Unable to set flash mode", __func__);
 		}
+	}
+
+	// Lock Auto Exposure and White Balance only when Flash is OFF
+	if ((ae_lock != exynos_camera->ae_lock || awb_lock != exynos_camera->awb_lock || force) &&
+			exynos_camera->flash_mode == FLASH_MODE_OFF) {
+		exynos_camera->ae_lock = ae_lock;
+		exynos_camera->awb_lock = awb_lock;
+		aeawb = (ae_lock ? 0x1 : 0x0) | (awb_lock ? 0x2 : 0x0);
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, aeawb);
+		if (rc < 0)
+			ALOGE("%s: Unable to set AEAWB lock", __func__);
+	}
+
+	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
+	if (focus_mode_string != NULL) {
+		if (focus_mode == 0) {
+			if (strcmp(focus_mode_string, "auto") == 0)
+				focus_mode = FOCUS_MODE_AUTO;
+			else if (strcmp(focus_mode_string, "infinity") == 0)
+				focus_mode = FOCUS_MODE_INFINITY;
+			else if (strcmp(focus_mode_string, "macro") == 0)
+				focus_mode = FOCUS_MODE_MACRO;
+			else if (strcmp(focus_mode_string, "fixed") == 0)
+				focus_mode = FOCUS_MODE_FIXED;
+			else if (strcmp(focus_mode_string, "facedetect") == 0)
+				focus_mode = FOCUS_MODE_FACEDETECT;
+			else if (strcmp(focus_mode_string, "continuous-video") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
+			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
+			else {
+				exynos_param_string_set(exynos_camera, "focus-mode",
+					exynos_camera->raw_focus_mode);
+				return -EINVAL;
+			}
+		}
+
+		if (focus_mode != exynos_camera->focus_mode || force) {
+			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
+			if (rc < 0)
+				ALOGE("%s: Unable to set focus mode", __func__);
+		}
+
+		exynos_camera->focus_mode = focus_mode;
+		sprintf(exynos_camera->raw_focus_mode, "%s", focus_mode_string);
 	}
 
 	// Exposure
@@ -1083,53 +1148,6 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_WHITE_BALANCE, whitebalance);
 			if (rc < 0)
 				ALOGE("%s: Unable to set whitebalance", __func__);
-		}
-	}
-
-	// Scene mode
-
-	scene_mode_string = exynos_param_string_get(exynos_camera, "scene-mode");
-	if (scene_mode_string != NULL) {
-		if (strcmp(scene_mode_string, "auto") == 0)
-			scene_mode = SCENE_MODE_NONE;
-		else if (strcmp(scene_mode_string, "portrait") == 0)
-			scene_mode = SCENE_MODE_PORTRAIT;
-		else if (strcmp(scene_mode_string, "landscape") == 0)
-			scene_mode = SCENE_MODE_LANDSCAPE;
-		else if (strcmp(scene_mode_string, "night") == 0)
-			scene_mode = SCENE_MODE_NIGHTSHOT;
-		else if (strcmp(scene_mode_string, "beach") == 0)
-			scene_mode = SCENE_MODE_BEACH_SNOW;
-		else if (strcmp(scene_mode_string, "snow") == 0)
-			scene_mode = SCENE_MODE_BEACH_SNOW;
-		else if (strcmp(scene_mode_string, "sunset") == 0)
-			scene_mode = SCENE_MODE_SUNSET;
-		else if (strcmp(scene_mode_string, "fireworks") == 0)
-			scene_mode = SCENE_MODE_FIREWORKS;
-		else if (strcmp(scene_mode_string, "action") == 0)
-			scene_mode = SCENE_MODE_SPORTS;
-		else if (strcmp(scene_mode_string, "party") == 0)
-			scene_mode = SCENE_MODE_PARTY_INDOOR;
-		else if (strcmp(scene_mode_string, "candlelight") == 0)
-			scene_mode = SCENE_MODE_CANDLE_LIGHT;
-		else if (strcmp(scene_mode_string, "dusk-dawn") == 0)
-			scene_mode = SCENE_MODE_DUSK_DAWN;
-		else if (strcmp(scene_mode_string, "fall-color") == 0)
-			scene_mode = SCENE_MODE_FALL_COLOR;
-		else if (strcmp(scene_mode_string, "back-light") == 0)
-			scene_mode = SCENE_MODE_BACK_LIGHT;
-		else if (strcmp(scene_mode_string, "text") == 0)
-			scene_mode = SCENE_MODE_TEXT;
-		else if (strcmp(scene_mode_string, "high-sensitivity") == 0)
-			scene_mode = SCENE_MODE_LOW_LIGHT;
-		else
-			scene_mode = SCENE_MODE_NONE;
-
-		if (scene_mode != exynos_camera->scene_mode || force) {
-			exynos_camera->scene_mode = scene_mode;
-			rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, scene_mode);
-			if (rc < 0)
-				ALOGE("%s: Unable to set scene mode", __func__);
 		}
 	}
 
@@ -1228,12 +1246,17 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 // Capture
 
-int s5c73m3_interleaved_decode(void *data, int size,
+int s5c73m3_interleaved_decode(struct exynos_camera *exynos_camera, void *data, int size,
 	void *yuv_data, int *yuv_size, int yuv_width, int yuv_height,
-	void *jpeg_data, int *jpeg_size, int *decoded, int *auto_focus_result)
+	void *jpeg_data, int *jpeg_size, int *decoded, int *auto_focus_result,
+	struct exynos_exif *exif)
 {
+	exif_attribute_t *attributes;
+	camera_face_t caface[exynos_camera->max_detected_faces];
 	int yuv_length;
 	int jpeg_length;
+	int num_detected_faces;
+	int face;
 	unsigned char *yuv_p;
 	unsigned char *jpeg_p;
 	unsigned char *data_p;
@@ -1265,25 +1288,7 @@ int s5c73m3_interleaved_decode(void *data, int size,
 	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
 	data_p += 50; // Experimental offset for auto-focus result
 
-	s5c73m3_auto_focus_result = *data_p;
-
-	switch (s5c73m3_auto_focus_result) {
-		case S5C73M3_CAF_STATUS_FOCUSING:
-		case S5C73M3_CAF_STATUS_FIND_SEARCHING_DIR:
-		case S5C73M3_AF_STATUS_INVALID:
-			*auto_focus_result = CAMERA_AF_STATUS_IN_PROGRESS;
-		break;
-		case S5C73M3_AF_STATUS_FOCUSED:
-		case S5C73M3_CAF_STATUS_FOCUSED:
-			*auto_focus_result = CAMERA_AF_STATUS_SUCCESS;
-		break;
-
-		case S5C73M3_CAF_STATUS_UNFOCUSED:
-		case S5C73M3_AF_STATUS_UNFOCUSED:
-		default:
-			*auto_focus_result = CAMERA_AF_STATUS_FAIL;
-		break;
-	}
+	*auto_focus_result = (int) *data_p;
 
 	data_p = (unsigned char *) data;
 	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
@@ -1299,8 +1304,62 @@ int s5c73m3_interleaved_decode(void *data, int size,
 	offset_p = (unsigned int *) data_p;
 	pointers_array_size = BIG2LITTLE_ENDIAN(*offset_p);
 
+	// FaceDetection Information
+	data_p = (unsigned char *) data;
+	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
+	data_p += 108; //Number of Faces Detected
+
+	num_detected_faces = (int) *data_p;
+	data_p += 2; //Start of Face Detection Info
+
+	exynos_camera->mFaceData.faces = caface;
+	if (num_detected_faces > 0 && num_detected_faces < exynos_camera->max_detected_faces)
+	{
+		for (face = 0; face < num_detected_faces; face++) {
+			exynos_camera->mFaceData.faces[face].rect[0] = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+			exynos_camera->mFaceData.faces[face].rect[1] = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+			exynos_camera->mFaceData.faces[face].rect[2] = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+			exynos_camera->mFaceData.faces[face].rect[3] = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+			exynos_camera->mFaceData.faces[face].score = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+			exynos_camera->mFaceData.faces[face].id = (short)(data_p[1] << 8) + data_p[0];
+			data_p += 2;
+		}
+	}
+	exynos_camera->mFaceData.number_of_faces = num_detected_faces;
+
 	if (!*decoded)
 		return 0;
+
+	attributes = &exif->attributes;
+
+	//Extract the EXIF from the Metadata
+	//Flash
+	data_p = (unsigned char *) data;
+	data_p += size - 0x1000; // End of the first plane (interleaved buffer)
+	data_p += 4; // EXIF Flash Offset
+	attributes->flash = (int) data_p[0];
+
+	//ISO
+	data_p += 4; // EXIF ISO Offset
+	attributes->iso_speed_rating = (data_p[1] << 8) + data_p[0];
+
+	//Exposure
+	data_p += 4; // EXIF Exposure Offset
+	attributes->brightness.num = (int) data_p[0];
+
+	//Exposure Bias
+	data_p += 4; // EXIF Exposure Bias Offset
+	attributes->exposure_bias.num = (data_p[1] << 8) + data_p[0];
+
+	//Exposure Time
+	data_p += 8; // EXIF Exposure Time Offset
+	attributes->exposure_time.den = (data_p[1] << 8) + data_p[0];
+
 
 	ALOGD("%s: Interleaved pointers array is at offset 0x%x, 0x%x bytes long\n", __func__, pointers_array_offset, pointers_array_size);
 
@@ -1386,6 +1445,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	int buffers_count;
 	int buffer_length;
 	int auto_focus_result;
+	int current_af;
 	int decoded;
 	int busy;
 	void *pointer;
@@ -1446,17 +1506,36 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			yuv_length = jpeg_length = 0;
 			auto_focus_result = decoded = 0;
 
-			rc = s5c73m3_interleaved_decode(pointer, buffer_length, exynos_camera->capture_yuv_buffer, &yuv_length, width, height, exynos_camera->capture_jpeg_buffer, &jpeg_length, &decoded, &auto_focus_result);
+			rc = s5c73m3_interleaved_decode(exynos_camera, pointer, buffer_length, exynos_camera->capture_yuv_buffer, &yuv_length, width, height, exynos_camera->capture_jpeg_buffer, &jpeg_length, &decoded, &auto_focus_result, &exynos_camera->exif);
 			if (rc < 0) {
 				ALOGE("%s: Unable to decode S5C73M3 interleaved", __func__);
 				goto error;
 			}
 
-			if (auto_focus_result != exynos_camera->capture_auto_focus_result) {
-				exynos_camera->capture_auto_focus_result = auto_focus_result;
+			// AutoFocus
+			switch (auto_focus_result) {
+				case S5C73M3_CAF_STATUS_FOCUSING:
+				case S5C73M3_CAF_STATUS_FIND_SEARCHING_DIR:
+				case S5C73M3_AF_STATUS_FOCUSING:
+					current_af = CAMERA_AF_STATUS_IN_PROGRESS;
+					break;
+				case S5C73M3_CAF_STATUS_FOCUSED:
+				case S5C73M3_AF_STATUS_FOCUSED:
+					current_af = CAMERA_AF_STATUS_SUCCESS;
+					break;
+				case S5C73M3_CAF_STATUS_UNFOCUSED:
+				case S5C73M3_AF_STATUS_UNFOCUSED:
+					current_af = CAMERA_AF_STATUS_FAIL;
+					break;
+				case S5C73M3_AF_STATUS_INVALID:
+				default:
+					current_af = CAMERA_AF_STATUS_RESTART;
+			}
 
-				if (!exynos_camera->auto_focus_thread_enabled) {
-					rc = exynos_camera_auto_focus(exynos_camera, auto_focus_result);
+			if (current_af != exynos_camera->auto_focus_result) {
+				exynos_camera->auto_focus_result = current_af;
+				if (exynos_camera->auto_focus_enabled) {
+					rc = exynos_camera_auto_focus(exynos_camera, current_af);
 					if (rc < 0) {
 						ALOGE("%s: Unable to auto focus", __func__);
 						goto error;
@@ -1505,6 +1584,8 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 				buffer->format = V4L2_PIX_FMT_JPEG;
 
 				exynos_camera->capture_hybrid = 0;
+
+				exynos_exif_create(exynos_camera, &exynos_camera->exif);
 			}
 			break;
 		case V4L2_PIX_FMT_JPEG:
@@ -1555,6 +1636,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			buffer->width = exynos_camera->jpeg_thumbnail_width;
 			buffer->height = exynos_camera->jpeg_thumbnail_height;
 			buffer->format = V4L2_PIX_FMT_JPEG;
+
 			break;
 		default:
 			buffers_count = 1;
@@ -1932,6 +2014,10 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 		}
 
 		exynos_camera->capture_memory = memory;
+
+		memory = exynos_camera->callbacks.request_memory(-1, 1, 1, exynos_camera->callbacks.user);
+
+		exynos_camera->face_data = memory;
 	} else {
 		ALOGE("%s: No memory request function!", __func__);
 		goto error;
@@ -1941,6 +2027,10 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 		exynos_camera->capture_yuv_buffer = malloc(buffer_length);
 		exynos_camera->capture_jpeg_buffer = malloc(buffer_length);
 	}
+
+	// Start EXIF
+	memset(&exynos_camera->exif, 0, sizeof(exynos_camera->exif));
+	exynos_exif_start(exynos_camera, &exynos_camera->exif);
 
 	for (i = 0; i < buffers_count; i++) {
 		rc = exynos_v4l2_qbuf_cap(exynos_camera, 0, i);
@@ -1978,6 +2068,21 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 	if (rc < 0) {
 		ALOGE("%s: Unable to start stream", __func__);
 		goto error;
+	}
+
+	// Few Scene Modes require to be set after stream on
+	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SCENE_MODE, exynos_camera->scene_mode);
+	if (rc < 0) {
+		ALOGE("%s: Unable to set scene mode", __func__);
+		goto error;
+	}
+
+	if (exynos_camera->camera_fimc_is) {
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_IS_CMD_FD, IS_FD_COMMAND_START);
+		if (rc < 0) {
+			ALOGE("%s: Unable to start face detection", __func__);
+			goto error;
+		}
 	}
 
 	exynos_camera->capture_enabled = 1;
@@ -2020,6 +2125,12 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 			ALOGE("%s: Unable to set hybrid", __func__);
 	}
 
+	if (exynos_camera->camera_fimc_is) {
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_IS_CMD_FD, IS_FD_COMMAND_STOP);
+		if (rc < 0)
+			ALOGE("%s: Unable to stop face detection", __func__);
+	}
+
 	rc = exynos_v4l2_streamoff_cap(exynos_camera, 0);
 	if (rc < 0) {
 		ALOGE("%s: Unable to stop stream", __func__);
@@ -2038,6 +2149,11 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 	if (exynos_camera->capture_jpeg_buffer != NULL) {
 		free(exynos_camera->capture_jpeg_buffer);
 		exynos_camera->capture_jpeg_buffer = NULL;
+	}
+
+	if (&exynos_camera->exif != NULL) {
+		exynos_exif_stop(exynos_camera, &exynos_camera->exif);
+		free(&exynos_camera->exif);
 	}
 
 	exynos_camera->capture_enabled = 0;
@@ -2155,10 +2271,12 @@ struct exynos_camera_capture_listener *exynos_camera_capture_listener_register(
 	if (exynos_camera->capture_listeners == NULL)
 		exynos_camera->capture_listeners = listener;
 
-	rc = exynos_camera_capture_setup(exynos_camera);
-	if (rc < 0) {
-		ALOGE("%s: Unable to setup capture", __func__);
-		goto error;
+	if (!(exynos_camera->camera_fimc_is && exynos_camera->picture_thread_enabled)) {
+		rc = exynos_camera_capture_setup(exynos_camera);
+		if (rc < 0) {
+			ALOGE("%s: Unable to setup capture", __func__);
+			goto error;
+		}
 	}
 
 	rc = 0;
@@ -2397,6 +2515,7 @@ int exynos_camera_preview(struct exynos_camera *exynos_camera)
 	void *window_data;
 	int window_stride;
 	camera_memory_t *memory;
+	camera_face_t caface[exynos_camera->max_detected_faces];
 	void *memory_pointer;
 	int memory_index;
 	int memory_size;
@@ -2447,8 +2566,17 @@ int exynos_camera_preview(struct exynos_camera *exynos_camera)
 		exynos_camera->preview_window->enqueue_buffer(exynos_camera->preview_window, window_buffer);
 	}
 
+	if (exynos_camera->camera_fimc_is) {
+		exynos_camera->mFaceData.faces = caface;
+		exynos_v4l2_s_ext_ctrl_face_detection(exynos_camera, 0, &exynos_camera->mFaceData);
+	}
+
 	if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_PREVIEW_FRAME) && EXYNOS_CAMERA_CALLBACK_DEFINED(data) && !exynos_camera->callback_lock) {
 		exynos_camera->callbacks.data(CAMERA_MSG_PREVIEW_FRAME, memory, memory_index, NULL, exynos_camera->callbacks.user);
+	}
+
+	if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_PREVIEW_METADATA) && EXYNOS_CAMERA_CALLBACK_DEFINED(data) && !exynos_camera->callback_lock) {
+		exynos_camera->callbacks.data(CAMERA_MSG_PREVIEW_METADATA, exynos_camera->face_data, 0, &exynos_camera->mFaceData, exynos_camera->callbacks.user);
 	}
 
 	if (exynos_camera->preview_output_enabled) {
@@ -2650,12 +2778,10 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 	pthread_mutex_lock(&exynos_camera->picture_mutex);
 
 	if (!exynos_camera->picture_enabled && !exynos_camera->camera_fimc_is) {
-#if 0
-		if (exynos_camera->focus_mode == FOCUS_MODE_CONTINOUS_PICTURE && exynos_camera->capture_auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
+		if (exynos_camera->auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
 			pthread_mutex_unlock(&exynos_camera->picture_mutex);
 			return 0;
 		}
-#endif
 
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_CAPTURE, 0);
 		if (rc < 0) {
@@ -2692,7 +2818,7 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 			else if (buffers->width == thumbnail_width && buffers->height == thumbnail_height)
 				jpeg_thumbnail_buffer = buffers;
 		} else {
-			if (buffers->width >= width && buffers->height >= height)
+			if ((buffers->width >= width && buffers->height >= height) || exynos_camera->camera_fimc_is)
 				yuv_buffer = buffers;
 			if (buffers->width >= thumbnail_width && buffers->height >= thumbnail_height)
 				yuv_thumbnail_buffer = buffers;
@@ -2762,7 +2888,6 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	struct exynos_camera_buffer *yuv_thumbnail_buffer;
 	struct exynos_v4l2_output output;
 	struct exynos_jpeg jpeg;
-	struct exynos_exif exif;
 	int output_enabled = 0;
 	int width, height, format;
 	int buffer_width, buffer_height, buffer_format, buffer_address;
@@ -2832,7 +2957,7 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 		buffer_format = yuv_buffer->format;
 		buffer_address = yuv_buffer->address;
 
-		if (width != buffer_width && height != buffer_height) {
+		if ((width != buffer_width && height != buffer_height) || exynos_camera->camera_fimc_is) {
 			format = EXYNOS_CAMERA_PICTURE_OUTPUT_FORMAT;
 
 			memset(&output, 0, sizeof(output));
@@ -2862,6 +2987,9 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 			yuv_data = output.memory->data;
 			yuv_address = output.memory_address;
 			yuv_size = output.buffer_length;
+
+			if (exynos_camera->camera_fimc_is)
+				exynos_exif_create(exynos_camera, &exynos_camera->exif);
 		}
 
 		memset(&jpeg, 0, sizeof(jpeg));
@@ -3022,24 +3150,16 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	}
 
 	// EXIF
+	exynos_camera->exif.jpeg_thumbnail_data = jpeg_thumbnail_data;
+	exynos_camera->exif.jpeg_thumbnail_size = jpeg_thumbnail_size;
 
-	memset(&exif, 0, sizeof(exif));
-	exif.jpeg_thumbnail_data = jpeg_thumbnail_data;
-	exif.jpeg_thumbnail_size = jpeg_thumbnail_size;
-
-	rc = exynos_exif_start(exynos_camera, &exif);
-	if (rc < 0) {
-		ALOGE("%s: Unable to start exif", __func__);
-		goto error;
-	}
-
-	rc = exynos_exif(exynos_camera, &exif);
+	rc = exynos_exif(exynos_camera, &exynos_camera->exif);
 	if (rc < 0) {
 		ALOGE("%s: Unable to exif", __func__);
 		goto error;
 	}
 
-	memory_size = exif.memory_size + jpeg_size;
+	memory_size = exynos_camera->exif.memory_size + jpeg_size;
 
 	if (EXYNOS_CAMERA_CALLBACK_DEFINED(request_memory)) {
 		memory = exynos_camera->callbacks.request_memory(-1, memory_size, 1, exynos_camera->callbacks.user);
@@ -3059,13 +3179,11 @@ int exynos_camera_picture(struct exynos_camera *exynos_camera)
 	p += 2;
 
 	// Copy the EXIF data
-	memcpy(p, exif.memory->data, exif.memory_size);
-	p += exif.memory_size;
+	memcpy(p, exynos_camera->exif.memory->data, exynos_camera->exif.memory_size);
+	p += exynos_camera->exif.memory_size;
 
 	// Copy the JPEG picture
 	memcpy(p, (void *) ((unsigned char *) jpeg_data + 2), jpeg_size - 2);
-
-	exynos_exif_stop(exynos_camera, &exif);
 
 	exynos_camera->picture_memory = memory;
 
@@ -3724,69 +3842,20 @@ int exynos_camera_auto_focus(struct exynos_camera *exynos_camera, int auto_focus
 		case CAMERA_AF_STATUS_SUCCESS:
 			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
 				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 1, 0, exynos_camera->callbacks.user);
+			exynos_camera_auto_focus_finish(exynos_camera);
 			break;
 		case CAMERA_AF_STATUS_FAIL:
-		default:
 			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
 				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 0, 0, exynos_camera->callbacks.user);
+			exynos_camera_auto_focus_finish(exynos_camera);
 			break;
 	}
 
 	return 0;
 }
 
-void *exynos_camera_auto_focus_thread(void *data)
+int exynos_camera_auto_focus_start(struct exynos_camera *exynos_camera)
 {
-	struct exynos_camera *exynos_camera;
-	int auto_focus_status = CAMERA_AF_STATUS_FAIL;
-	int auto_focus_completed = 0;
-	int rc;
-
-	if (data == NULL)
-		return NULL;
-
-	exynos_camera = (struct exynos_camera *) data;
-
-	ALOGE("%s: Starting thread", __func__);
-	exynos_camera->auto_focus_thread_running = 1;
-
-	while (exynos_camera->auto_focus_thread_enabled) {
-		pthread_mutex_lock(&exynos_camera->auto_focus_mutex);
-
-		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AUTO_FOCUS_RESULT, &auto_focus_status);
-		if (rc < 0) {
-			ALOGE("%s: Unable to get auto-focus result", __func__);
-			auto_focus_status = CAMERA_AF_STATUS_FAIL;
-		}
-
-		rc = exynos_camera_auto_focus(exynos_camera, auto_focus_status);
-		if (rc < 0) {
-			ALOGE("%s: Unable to auto-focus", __func__);
-			auto_focus_status = CAMERA_AF_STATUS_FAIL;
-		}
-
-		if (auto_focus_status == CAMERA_AF_STATUS_IN_PROGRESS)
-			usleep(10000);
-		else
-			auto_focus_completed = 1;
-
-		pthread_mutex_unlock(&exynos_camera->auto_focus_mutex);
-
-		if (auto_focus_completed) {
-			exynos_camera->auto_focus_thread_running = 0;
-			exynos_camera_auto_focus_thread_stop(exynos_camera);
-		}
-	}
-
-	exynos_camera->auto_focus_thread_running = 0;
-	ALOGE("%s: Exiting thread", __func__);
-
-	return NULL;
-}
-
-int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
-{
-	pthread_attr_t thread_attr;
 	int auto_focus;
 	int rc;
 
@@ -3794,13 +3863,6 @@ int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
 		return -EINVAL;
 
 	ALOGD("%s()", __func__);
-
-	if (exynos_camera->auto_focus_thread_enabled) {
-		ALOGE("Auto-focus thread was already started!");
-		return 0;
-	}
-
-	pthread_mutex_init(&exynos_camera->auto_focus_mutex, NULL);
 
 	auto_focus = AUTO_FOCUS_ON | (exynos_camera->preview_width & 0xfff) << 20 | (exynos_camera->preview_height & 0xfff) << 8;
 
@@ -3810,22 +3872,12 @@ int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera)
 		goto error;
 	}
 
-	pthread_attr_init(&thread_attr);
-	pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
-
-	exynos_camera->auto_focus_thread_enabled = 1;
-
-	rc = pthread_create(&exynos_camera->auto_focus_thread, &thread_attr, exynos_camera_auto_focus_thread, (void *) exynos_camera);
-	if (rc < 0) {
-		ALOGE("%s: Unable to create thread", __func__);
-		goto error;
-	}
+	exynos_camera->auto_focus_enabled = 1;
 
 	rc = 0;
 	goto complete;
 
 error:
-	pthread_mutex_destroy(&exynos_camera->auto_focus_mutex);
 
 	rc = -1;
 
@@ -3833,7 +3885,24 @@ complete:
 	return rc;
 }
 
-void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera)
+void exynos_camera_auto_focus_finish(struct exynos_camera *exynos_camera)
+{
+	int rc;
+
+	ALOGD("%s()", __func__);
+
+	if (!exynos_camera->auto_focus_enabled) {
+		return;
+	}
+
+	exynos_camera->auto_focus_enabled = 0;
+
+	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, AE_UNLOCK_AWB_UNLOCK);
+	if (rc < 0)
+		ALOGE("%s: Unable to set AEAWB lock", __func__);
+}
+
+void exynos_camera_auto_focus_stop(struct exynos_camera *exynos_camera)
 {
 	int rc;
 	int i;
@@ -3843,28 +3912,13 @@ void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera)
 
 	ALOGD("%s()", __func__);
 
-	if (!exynos_camera->auto_focus_thread_enabled) {
-		ALOGE("Auto-focus thread was already stopped!");
-		return;
-	}
-
-	exynos_camera->auto_focus_thread_enabled = 0;
-
-	// Wait for the thread to end
-	i = 0;
-	while (exynos_camera->auto_focus_thread_running) {
-		if (i++ > 10000) {
-			ALOGE("Auto-focus thread is taking too long to end, something is going wrong");
-			break;
-		}
-		usleep(100);
-	}
-
 	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SET_AUTO_FOCUS, AUTO_FOCUS_OFF);
 	if (rc < 0)
 		ALOGE("%s: Unable to set auto-focus off", __func__);
 
-	pthread_mutex_destroy(&exynos_camera->auto_focus_mutex);
+	if (exynos_camera->auto_focus_enabled)
+		exynos_camera_auto_focus_finish(exynos_camera);
+
 }
 
 /*
@@ -4161,7 +4215,7 @@ int exynos_camera_start_auto_focus(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	return exynos_camera_auto_focus_thread_start(exynos_camera);
+	return exynos_camera_auto_focus_start(exynos_camera);
 }
 
 int exynos_camera_cancel_auto_focus(struct camera_device *dev)
@@ -4175,7 +4229,7 @@ int exynos_camera_cancel_auto_focus(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	exynos_camera_auto_focus_thread_stop(exynos_camera);
+	exynos_camera_auto_focus_stop(exynos_camera);
 
 	return 0;
 }
@@ -4192,8 +4246,7 @@ int exynos_camera_take_picture(struct camera_device *dev)
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
-	if (exynos_camera->picture_thread_running
-		|| exynos_camera->auto_focus_thread_enabled)
+	if (exynos_camera->picture_thread_running)
 	{
 		return 0;
 	}
@@ -4290,13 +4343,59 @@ void exynos_camera_put_parameters(struct camera_device *dev, char *params)
 		free(params);
 }
 
+int setFaceDetect(struct exynos_camera *exynos_camera, int face_detect)
+{
+	ALOGD("%s(face_detect(%d))", __func__, face_detect);
+	if (exynos_camera->camera_fimc_is) {
+		if (face_detect < IS_FD_COMMAND_STOP || IS_FD_COMMAND_MAX <= face_detect) {
+			ALOGE("ERR(%s):Invalid face_detect value (%d)", __func__, face_detect);
+			return -1;
+		}
+	} else {
+		if (face_detect < FACE_DETECTION_OFF || FACE_DETECTION_MAX <= face_detect) {
+			ALOGE("ERR(%s):Invalid face_detect value (%d)", __func__, face_detect);
+			return -1;
+		}
+	}
+
+	if (exynos_camera->camera_fimc_is) {
+		if (exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_IS_CMD_FD, face_detect) < 0) {
+			ALOGE("ERR(%s):Fail on V4L2_CID_IS_CMD_FD", __func__);
+			return -1;
+		}
+	} else {
+		if (exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FACE_DETECTION, face_detect) < 0) {
+			ALOGE("ERR(%s):Fail on V4L2_CID_CAMERA_FACE_DETECTION", __func__);
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
 int exynos_camera_send_command(struct camera_device *dev,
 	int32_t cmd, int32_t arg1, int32_t arg2)
 {
+	struct exynos_camera *exynos_camera;
+	exynos_camera = (struct exynos_camera *) dev->priv;
+
 	ALOGD("%s(%p, %d, %d, %d)", __func__, dev, cmd, arg1, arg2);
 	switch (cmd) {
 		case CAMERA_CMD_START_FACE_DETECTION:
-			return -EINVAL;
+			if (setFaceDetect(exynos_camera, FACE_DETECTION_ON) < 0) {
+				ALOGE("ERR: Fail on setFaceDetect(ON)");
+				return -EINVAL;
+			} else {
+				return 0;
+			}
+			break;
+		case CAMERA_CMD_STOP_FACE_DETECTION:
+			if (setFaceDetect(exynos_camera, FACE_DETECTION_OFF) < 0) {
+				ALOGE("ERR: Fail on setFaceDetect(OFF)");
+				return -EINVAL;
+			} else {
+				return 0;
+			}
 			break;
 		default:
 			break;

@@ -144,6 +144,8 @@ struct exynos_camera_params {
 	char *focus_areas;
 	int max_num_focus_areas;
 
+	int max_detected_faces;
+
 	int zoom_supported;
 	int smooth_zoom_supported;
 	char *zoom_ratios;
@@ -312,12 +314,13 @@ struct exynos_camera {
 
 	int capture_enabled;
 	struct exynos_camera_capture_listener *capture_listeners;
+	struct exynos_exif exif;
 	camera_memory_t *capture_memory;
 	int capture_memory_address;
 	int capture_memory_index;
 	void *capture_yuv_buffer;
 	void *capture_jpeg_buffer;
-	int capture_auto_focus_result;
+	int auto_focus_result;
 	int capture_hybrid;
 	int capture_width;
 	int capture_height;
@@ -356,6 +359,11 @@ struct exynos_camera {
 	struct exynos_camera_buffer picture_yuv_buffer;
 	struct exynos_camera_buffer picture_yuv_thumbnail_buffer;
 
+	// Face Detection
+	camera_frame_metadata_t mFaceData;
+	camera_memory_t *face_data;
+	int max_detected_faces;
+
 	// Recording
 
 	pthread_t recording_thread;
@@ -376,10 +384,7 @@ struct exynos_camera {
 
 	// Auto-focus
 
-	pthread_t auto_focus_thread;
-	pthread_mutex_t auto_focus_mutex;
-	int auto_focus_thread_enabled;
-	int auto_focus_thread_running;
+	int auto_focus_enabled;
 
 	// Camera params
 
@@ -508,14 +513,16 @@ void exynos_camera_recording_thread_stop(struct exynos_camera *exynos_camera);
 
 // Auto-focus
 int exynos_camera_auto_focus(struct exynos_camera *exynos_camera, int auto_focus_status);
-int exynos_camera_auto_focus_thread_start(struct exynos_camera *exynos_camera);
-void exynos_camera_auto_focus_thread_stop(struct exynos_camera *exynos_camera);
+int exynos_camera_auto_focus_start(struct exynos_camera *exynos_camera);
+void exynos_camera_auto_focus_finish(struct exynos_camera *exynos_camera);
+void exynos_camera_auto_focus_stop(struct exynos_camera *exynos_camera);
 
 /*
  * EXIF
  */
 
 int exynos_exif_start(struct exynos_camera *exynos_camera, struct exynos_exif *exif);
+int exynos_exif_create(struct exynos_camera *exynos_camera, struct exynos_exif *exif);
 void exynos_exif_stop(struct exynos_camera *exynos_camera,
 	struct exynos_exif *exif);
 int exynos_exif(struct exynos_camera *exynos_camera, struct exynos_exif *exif);
@@ -590,6 +597,8 @@ int exynos_v4l2_ioctl(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 int exynos_v4l2_poll(struct exynos_camera *exynos_camera, int exynos_v4l2_id);
 int exynos_v4l2_qbuf(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 	int type, int memory, int index, unsigned long userptr);
+int exynos_v4l2_s_ext_ctrl_face_detection(struct exynos_camera *exynos_camera,
+	int id, void *value);
 int exynos_v4l2_qbuf_cap(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 	int index);
 int exynos_v4l2_qbuf_out(struct exynos_camera *exynos_camera, int exynos_v4l2_id,

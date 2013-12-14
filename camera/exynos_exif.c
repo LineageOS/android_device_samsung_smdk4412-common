@@ -262,63 +262,68 @@ int exynos_exif_attributes_create_params(struct exynos_camera *exynos_camera,
 	attributes->focal_length.num = exynos_camera->camera_focal_length;
 	attributes->focal_length.den = EXIF_DEF_FOCAL_LEN_DEN;
 
-	shutter_speed = 100;
-	rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_TV,
-		&shutter_speed);
-	if (rc < 0)
-		ALOGE("%s: Unable to get shutter speed", __func__);
+	// Only Query the Front Camera Sensor for EXIF Attributes.
+	if (exynos_camera->camera_fimc_is) {
+		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_EXPTIME,
+			&exposure_time);
+		if (rc < 0)
+			ALOGE("%s: Unable to get exposure time", __func__);
 
-	attributes->shutter_speed.num = shutter_speed;
+		attributes->exposure_time.den = exposure_time;
+
+		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_ISO,
+			&iso_speed);
+		if (rc < 0)
+			ALOGE("%s: Unable to get iso", __func__);
+
+		attributes->iso_speed_rating = iso_speed;
+
+		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_FLASH,
+			&flash_results);
+		if (rc < 0)
+			ALOGE("%s: Unable to get flash", __func__);
+
+		attributes->flash = flash_results;
+
+		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_BV,
+		(int *) &bv);
+		if (rc < 0) {
+			ALOGE("%s: Unable to get bv", __func__);
+			goto bv_static;
+		}
+
+		rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_EBV,
+			(int *) &ev);
+		if (rc < 0) {
+			ALOGE("%s: Unable to get ebv", __func__);
+			goto bv_static;
+		}
+
+		goto bv_ioctl;
+
+bv_static:
+		exposure = exynos_param_int_get(exynos_camera, "exposure-compensation");
+		if (exposure < 0)
+			exposure = EV_DEFAULT;
+
+		av = APEX_FNUM_TO_APERTURE((double) attributes->fnumber.num /
+			attributes->fnumber.den);
+		tv = APEX_EXPOSURE_TO_SHUTTER((double) attributes->exposure_time.num /
+			attributes->exposure_time.den);
+		sv = APEX_ISO_TO_FILMSENSITIVITY(iso_speed);
+		bv = av + tv - sv;
+		ev = exposure - EV_DEFAULT;
+
+
+bv_ioctl:
+		attributes->brightness.num = bv;
+	}
+
+	attributes->shutter_speed.num = APEX_EXPOSURE_TO_SHUTTER(attributes->exposure_time.den);
 	attributes->shutter_speed.den = 100;
 
 	attributes->exposure_time.num = 1;
-	attributes->exposure_time.den = APEX_SHUTTER_TO_EXPOSURE(shutter_speed);
 
-	rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_ISO,
-		&iso_speed);
-	if (rc < 0)
-		ALOGE("%s: Unable to get iso", __func__);
-
-	attributes->iso_speed_rating = iso_speed;
-
-	rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_FLASH,
-		&flash_results);
-	if (rc < 0)
-		ALOGE("%s: Unable to get flash", __func__);
-
-	attributes->flash = flash_results;
-
-	rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_BV,
-		(int *) &bv);
-	if (rc < 0) {
-		ALOGE("%s: Unable to get bv", __func__);
-		goto bv_static;
-	}
-
-	rc = exynos_v4l2_g_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_EXIF_EBV,
-		(int *) &ev);
-	if (rc < 0) {
-		ALOGE("%s: Unable to get ebv", __func__);
-		goto bv_static;
-	}
-
-	goto bv_ioctl;
-
-bv_static:
-	exposure = exynos_param_int_get(exynos_camera, "exposure-compensation");
-	if (exposure < 0)
-		exposure = EV_DEFAULT;
-
-	av = APEX_FNUM_TO_APERTURE((double) attributes->fnumber.num /
-		attributes->fnumber.den);
-	tv = APEX_EXPOSURE_TO_SHUTTER((double) attributes->exposure_time.num /
-		attributes->exposure_time.den);
-	sv = APEX_ISO_TO_FILMSENSITIVITY(iso_speed);
-	bv = av + tv - sv;
-	ev = exposure - EV_DEFAULT;
-
-bv_ioctl:
-	attributes->brightness.num = bv;
 	attributes->brightness.den = EXIF_DEF_APEX_DEN;
 
 	if (exynos_camera->scene_mode == SCENE_MODE_BEACH_SNOW) {
@@ -443,6 +448,24 @@ int exynos_exif_start(struct exynos_camera *exynos_camera, struct exynos_exif *e
 	rc = 0;
 	goto complete;
 
+error:
+	rc = -1;
+
+complete:
+	return rc;
+}
+
+int exynos_exif_create(struct exynos_camera *exynos_camera, struct exynos_exif *exif)
+{
+	int rc;
+
+	rc = exynos_exif_attributes_create_params(exynos_camera, exif);
+	if (rc < 0) {
+		ALOGE("%s: Unable to create exif parameters", __func__);
+		goto error;
+	}
+
+	goto complete;
 error:
 	rc = -1;
 
