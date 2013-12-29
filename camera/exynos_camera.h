@@ -320,7 +320,6 @@ struct exynos_camera {
 	int capture_memory_index;
 	void *capture_yuv_buffer;
 	void *capture_jpeg_buffer;
-	int auto_focus_result;
 	int capture_hybrid;
 	int capture_width;
 	int capture_height;
