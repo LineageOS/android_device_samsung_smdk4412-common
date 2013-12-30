@@ -144,8 +144,6 @@ struct exynos_camera_params {
 	char *focus_areas;
 	int max_num_focus_areas;
 
-	int max_detected_faces;
-
 	int zoom_supported;
 	int smooth_zoom_supported;
 	char *zoom_ratios;
@@ -358,11 +356,6 @@ struct exynos_camera {
 	struct exynos_camera_buffer picture_jpeg_thumbnail_buffer;
 	struct exynos_camera_buffer picture_yuv_buffer;
 	struct exynos_camera_buffer picture_yuv_thumbnail_buffer;
-
-	// Face Detection
-	camera_frame_metadata_t mFaceData;
-	camera_memory_t *face_data;
-	int max_detected_faces;
 
 	// Recording
 
@@ -597,8 +590,6 @@ int exynos_v4l2_ioctl(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 int exynos_v4l2_poll(struct exynos_camera *exynos_camera, int exynos_v4l2_id);
 int exynos_v4l2_qbuf(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 	int type, int memory, int index, unsigned long userptr);
-int exynos_v4l2_s_ext_ctrl_face_detection(struct exynos_camera *exynos_camera,
-	int id, void *value);
 int exynos_v4l2_qbuf_cap(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 	int index);
 int exynos_v4l2_qbuf_out(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
