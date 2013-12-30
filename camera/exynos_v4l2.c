@@ -232,69 +232,6 @@ int exynos_v4l2_dqbuf(struct exynos_camera *exynos_camera, int exynos_v4l2_id,
 	return buffer.index;
 }
 
-int exynos_v4l2_s_ext_ctrl_face_detection(struct exynos_camera *exynos_camera,
-	int id, void *value)
-{
-	struct v4l2_ext_control ext_ctrl_fd[111];
-	struct v4l2_ext_controls ext_ctrls_fd;
-	struct v4l2_ext_controls *ctrls;
-	camera_frame_metadata_t *facedata = (camera_frame_metadata_t *)value;
-	int i, ret;
-
-	ext_ctrl_fd[0].id = V4L2_CID_IS_FD_GET_FACE_COUNT;
-	for (i = 0; i < exynos_camera->max_detected_faces; i++) {
-		ext_ctrl_fd[22*i+1].id = V4L2_CID_IS_FD_GET_FACE_FRAME_NUMBER;
-		ext_ctrl_fd[22*i+2].id = V4L2_CID_IS_FD_GET_FACE_CONFIDENCE;
-		ext_ctrl_fd[22*i+3].id = V4L2_CID_IS_FD_GET_FACE_SMILE_LEVEL;
-		ext_ctrl_fd[22*i+4].id = V4L2_CID_IS_FD_GET_FACE_BLINK_LEVEL;
-		ext_ctrl_fd[22*i+5].id = V4L2_CID_IS_FD_GET_FACE_TOPLEFT_X;
-		ext_ctrl_fd[22*i+6].id = V4L2_CID_IS_FD_GET_FACE_TOPLEFT_Y;
-		ext_ctrl_fd[22*i+7].id = V4L2_CID_IS_FD_GET_FACE_BOTTOMRIGHT_X;
-		ext_ctrl_fd[22*i+8].id = V4L2_CID_IS_FD_GET_FACE_BOTTOMRIGHT_Y;
-		ext_ctrl_fd[22*i+9].id = V4L2_CID_IS_FD_GET_LEFT_EYE_TOPLEFT_X;
-		ext_ctrl_fd[22*i+10].id = V4L2_CID_IS_FD_GET_LEFT_EYE_TOPLEFT_Y;
-		ext_ctrl_fd[22*i+11].id = V4L2_CID_IS_FD_GET_LEFT_EYE_BOTTOMRIGHT_X;
-		ext_ctrl_fd[22*i+12].id = V4L2_CID_IS_FD_GET_LEFT_EYE_BOTTOMRIGHT_Y;
-		ext_ctrl_fd[22*i+13].id = V4L2_CID_IS_FD_GET_RIGHT_EYE_TOPLEFT_X;
-		ext_ctrl_fd[22*i+14].id = V4L2_CID_IS_FD_GET_RIGHT_EYE_TOPLEFT_Y;
-		ext_ctrl_fd[22*i+15].id = V4L2_CID_IS_FD_GET_RIGHT_EYE_BOTTOMRIGHT_X;
-		ext_ctrl_fd[22*i+16].id = V4L2_CID_IS_FD_GET_RIGHT_EYE_BOTTOMRIGHT_Y;
-		ext_ctrl_fd[22*i+17].id = V4L2_CID_IS_FD_GET_MOUTH_TOPLEFT_X;
-		ext_ctrl_fd[22*i+18].id = V4L2_CID_IS_FD_GET_MOUTH_TOPLEFT_Y;
-		ext_ctrl_fd[22*i+19].id = V4L2_CID_IS_FD_GET_MOUTH_BOTTOMRIGHT_X;
-		ext_ctrl_fd[22*i+20].id = V4L2_CID_IS_FD_GET_MOUTH_BOTTOMRIGHT_Y;
-		ext_ctrl_fd[22*i+21].id = V4L2_CID_IS_FD_GET_ANGLE;
-		ext_ctrl_fd[22*i+22].id = V4L2_CID_IS_FD_GET_NEXT;
-	}
-
-	ext_ctrls_fd.ctrl_class = V4L2_CTRL_CLASS_CAMERA;
-	ext_ctrls_fd.count = 111;
-	ext_ctrls_fd.controls = ext_ctrl_fd;
-	ctrls = &ext_ctrls_fd;
-
-	ret = exynos_v4l2_ioctl(exynos_camera, id, VIDIOC_G_EXT_CTRLS, &ext_ctrls_fd);
-
-	facedata->number_of_faces = ext_ctrls_fd.controls[0].value;
-
-	for(i = 0; i < facedata->number_of_faces; i++) {
-		facedata->faces[i].rect[0] = ext_ctrl_fd[22*i+5].value;
-		facedata->faces[i].rect[1] = ext_ctrl_fd[22*i+6].value;
-		facedata->faces[i].rect[2] = ext_ctrl_fd[22*i+7].value;
-		facedata->faces[i].rect[3] = ext_ctrl_fd[22*i+8].value;
-		facedata->faces[i].score = ext_ctrl_fd[22*i+2].value;
-		/* TODO : id is unique value for each face. We need to suppot this. */
-		facedata->faces[i].id = 0;
-		facedata->faces[i].left_eye[0] = (ext_ctrl_fd[22*i+9].value + ext_ctrl_fd[22*i+11].value) / 2;
-		facedata->faces[i].left_eye[1] = (ext_ctrl_fd[22*i+10].value + ext_ctrl_fd[22*i+12].value) / 2;
-		facedata->faces[i].right_eye[0] = (ext_ctrl_fd[22*i+13].value + ext_ctrl_fd[22*i+15].value) / 2;
-		facedata->faces[i].right_eye[1] = (ext_ctrl_fd[22*i+14].value + ext_ctrl_fd[22*i+16].value) / 2;
-		facedata->faces[i].mouth[0] = (ext_ctrl_fd[22*i+17].value + ext_ctrl_fd[22*i+19].value) / 2;
-		facedata->faces[i].mouth[1] = (ext_ctrl_fd[22*i+18].value + ext_ctrl_fd[22*i+20].value) / 2;
-	}
-
-	return ret;
-}
-
 int exynos_v4l2_dqbuf_cap(struct exynos_camera *exynos_camera,
 	int exynos_v4l2_id)
 {
