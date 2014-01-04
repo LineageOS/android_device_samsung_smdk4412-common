@@ -1528,14 +1528,11 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 					current_af = CAMERA_AF_STATUS_RESTART;
 			}
 
-			if (current_af != exynos_camera->auto_focus_result) {
-				exynos_camera->auto_focus_result = current_af;
-				if (exynos_camera->auto_focus_enabled) {
-					rc = exynos_camera_auto_focus(exynos_camera, current_af);
-					if (rc < 0) {
-						ALOGE("%s: Unable to auto focus", __func__);
-						goto error;
-					}
+			if (exynos_camera->auto_focus_enabled) {
+				rc = exynos_camera_auto_focus(exynos_camera, current_af);
+				if (rc < 0) {
+					ALOGE("%s: Unable to auto focus", __func__);
+					goto error;
 				}
 			}
 
@@ -2774,10 +2771,6 @@ int exynos_camera_picture_callback(struct exynos_camera *exynos_camera,
 	pthread_mutex_lock(&exynos_camera->picture_mutex);
 
 	if (!exynos_camera->picture_enabled && !exynos_camera->camera_fimc_is) {
-		if (exynos_camera->auto_focus_result == CAMERA_AF_STATUS_IN_PROGRESS) {
-			pthread_mutex_unlock(&exynos_camera->picture_mutex);
-			return 0;
-		}
 
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_CAPTURE, 0);
 		if (rc < 0) {
