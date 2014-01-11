@@ -384,6 +384,7 @@ struct exynos_camera {
 	// Auto-focus
 
 	int auto_focus_enabled;
+	int auto_focus_started;
 
 	// Camera params
 
