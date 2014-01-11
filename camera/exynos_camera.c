@@ -1536,6 +1536,26 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 				}
 			}
 
+			// CAF
+			switch (auto_focus_result) {
+				case S5C73M3_CAF_STATUS_FOCUSING:
+				case S5C73M3_CAF_STATUS_FIND_SEARCHING_DIR:
+					current_af = CAMERA_AF_STATUS_IN_PROGRESS;
+					break;
+				case S5C73M3_CAF_STATUS_FOCUSED:
+					current_af = CAMERA_AF_STATUS_SUCCESS;
+					break;
+				case S5C73M3_CAF_STATUS_UNFOCUSED:
+				default:
+					current_af = CAMERA_AF_STATUS_RESTART;
+			}
+
+			rc = exynos_camera_continuous_auto_focus(exynos_camera, current_af);
+			if (rc < 0) {
+				ALOGE("%s: Unable to continuous auto focus", __func__);
+				goto error;
+			}
+
 			if (!decoded) {
 				buffers_count = 1;
 				buffers = (struct exynos_camera_buffer *) calloc(buffers_count, sizeof(struct exynos_camera_buffer));
@@ -3822,21 +3842,48 @@ int exynos_camera_auto_focus(struct exynos_camera *exynos_camera, int auto_focus
 //	ALOGD("%s()", __func__);
 
 	switch (auto_focus_status) {
-		case CAMERA_AF_STATUS_IN_PROGRESS:
-/*
-			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS_MOVE) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
-				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS_MOVE, 1, 0, exynos_camera->callbacks.user);
-*/
-			break;
 		case CAMERA_AF_STATUS_SUCCESS:
-			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
-				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 1, 0, exynos_camera->callbacks.user);
-			exynos_camera_auto_focus_finish(exynos_camera);
+			if (exynos_camera->auto_focus_started) {
+				if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
+					exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 1, 0, exynos_camera->callbacks.user);
+				exynos_camera_auto_focus_finish(exynos_camera);
+			}
 			break;
 		case CAMERA_AF_STATUS_FAIL:
-			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
-				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 0, 0, exynos_camera->callbacks.user);
-			exynos_camera_auto_focus_finish(exynos_camera);
+			if (exynos_camera->auto_focus_started) {
+				if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
+					exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS, 0, 0, exynos_camera->callbacks.user);
+				exynos_camera_auto_focus_finish(exynos_camera);
+			}
+			break;
+		case CAMERA_AF_STATUS_IN_PROGRESS:
+			exynos_camera->auto_focus_started = 1;
+			break;
+		case CAMERA_AF_STATUS_RESTART:
+		default:
+			break;
+	}
+
+	return 0;
+}
+
+int exynos_camera_continuous_auto_focus(struct exynos_camera *exynos_camera, int auto_focus_status)
+{
+	if (exynos_camera == NULL)
+		return -EINVAL;
+
+	switch (auto_focus_status) {
+		case CAMERA_AF_STATUS_IN_PROGRESS:
+			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS_MOVE) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
+				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS_MOVE, 1, 0, exynos_camera->callbacks.user);
+
+			break;
+		case CAMERA_AF_STATUS_SUCCESS:
+			if (EXYNOS_CAMERA_MSG_ENABLED(CAMERA_MSG_FOCUS_MOVE) && EXYNOS_CAMERA_CALLBACK_DEFINED(notify) && !exynos_camera->callback_lock)
+				exynos_camera->callbacks.notify(CAMERA_MSG_FOCUS_MOVE, 0, 0, exynos_camera->callbacks.user);
+			break;
+		case CAMERA_AF_STATUS_RESTART:
+		default:
 			break;
 	}
 
@@ -3885,6 +3932,7 @@ void exynos_camera_auto_focus_finish(struct exynos_camera *exynos_camera)
 	}
 
 	exynos_camera->auto_focus_enabled = 0;
+	exynos_camera->auto_focus_started = 0;
 
 	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_AEAWB_LOCK_UNLOCK, AE_UNLOCK_AWB_UNLOCK);
 	if (rc < 0)
