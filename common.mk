@@ -75,8 +75,12 @@ PRODUCT_PACKAGES := \
     libsync \
     lights.exynos4 \
     macloader \
-    tinymix \
-    Torch    
+    tinymix
+
+ifneq ($(TARGET_HAS_CAM_FLASH) ,false)
+PRODUCT_PACKAGES += \
+    Torch
+endif
 
 # MFC API
 PRODUCT_PACKAGES += \
