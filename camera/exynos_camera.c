@@ -2636,6 +2636,8 @@ void *exynos_camera_preview_thread(void *data)
 		}
 
 		if (exynos_camera->preview_listener->busy) {
+			// Prevent preview restart race conditions
+			usleep((useconds_t)25 * 1000);
 			rc = exynos_camera_preview(exynos_camera);
 			if (rc < 0) {
 				ALOGE("%s: Unable to preview", __func__);
