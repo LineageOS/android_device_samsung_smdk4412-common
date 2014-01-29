@@ -20,4 +20,5 @@
 <resources>
     <!-- Use ZSL mode -->
     <bool name="enableZSL">true</bool>
+    <bool name="useContinuosFocusForTouch">true</bool>
 </resources>
