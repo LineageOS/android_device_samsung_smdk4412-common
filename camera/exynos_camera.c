@@ -923,6 +923,9 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 					ALOGE("%s: Unable to set object y position", __func__);
 			}
 		}
+
+		focus_mode = FOCUS_MODE_TOUCH;
+
 	}
 
 	// Zoom
@@ -1057,24 +1060,26 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 
 	focus_mode_string = exynos_param_string_get(exynos_camera, "focus-mode");
 	if (focus_mode_string != NULL) {
-		if (strcmp(focus_mode_string, "auto") == 0)
-			focus_mode = FOCUS_MODE_AUTO;
-		else if (strcmp(focus_mode_string, "infinity") == 0)
-			focus_mode = FOCUS_MODE_INFINITY;
-		else if (strcmp(focus_mode_string, "macro") == 0)
-			focus_mode = FOCUS_MODE_MACRO;
-		else if (strcmp(focus_mode_string, "fixed") == 0)
-			focus_mode = FOCUS_MODE_FIXED;
-		else if (strcmp(focus_mode_string, "facedetect") == 0)
-			focus_mode = FOCUS_MODE_FACEDETECT;
-		else if (strcmp(focus_mode_string, "continuous-video") == 0)
-			focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
-		else if (strcmp(focus_mode_string, "continuous-picture") == 0)
-			focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
-		else {
-			exynos_param_string_set(exynos_camera, "focus-mode",
-				exynos_camera->raw_focus_mode);
-			return -EINVAL;
+		if (focus_mode == 0) {
+			if (strcmp(focus_mode_string, "auto") == 0)
+				focus_mode = FOCUS_MODE_AUTO;
+			else if (strcmp(focus_mode_string, "infinity") == 0)
+				focus_mode = FOCUS_MODE_INFINITY;
+			else if (strcmp(focus_mode_string, "macro") == 0)
+				focus_mode = FOCUS_MODE_MACRO;
+			else if (strcmp(focus_mode_string, "fixed") == 0)
+				focus_mode = FOCUS_MODE_FIXED;
+			else if (strcmp(focus_mode_string, "facedetect") == 0)
+				focus_mode = FOCUS_MODE_FACEDETECT;
+			else if (strcmp(focus_mode_string, "continuous-video") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_VIDEO;
+			else if (strcmp(focus_mode_string, "continuous-picture") == 0)
+				focus_mode = FOCUS_MODE_CONTINOUS_PICTURE;
+			else {
+				exynos_param_string_set(exynos_camera, "focus-mode",
+					exynos_camera->raw_focus_mode);
+				return -EINVAL;
+			}
 		}
 
 		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_FOCUS_MODE, focus_mode);
