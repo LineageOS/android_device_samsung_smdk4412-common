@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fade3982_8bdb551b",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 10
+      },
+      "writtenOn": "2014-02-01T11:47:31Z",
+      "side": 1,
+      "message": "Check for focus_mode !\u003d FOCUS_MODE_TOUCH instead\n\nThe idea is to treat TTF as the exception, not 0 (FOCUS_MODE_AUTO) as a rule.",
+      "revId": "71ac4c9d9de8fe681c93ea2ada959b1d3001b108",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
