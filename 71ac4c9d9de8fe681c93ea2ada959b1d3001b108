@@ -16,6 +16,24 @@
       "revId": "71ac4c9d9de8fe681c93ea2ada959b1d3001b108",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_ab7d79e9",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 3545
+      },
+      "writtenOn": "2014-02-01T12:36:14Z",
+      "side": 1,
+      "message": "I think it would be better to initialize focus_mode as FOCUS_MODE_DEFAULT and then check for focus_mode !\u003d FOCUS_MODE_DEFAULT.\n\nWhen scene mode is active, the focus_mode should be FOCUS_MODE_AUTO, but currently it\u0027s being overridden. (Line 1017)",
+      "parentUuid": "fade3982_8bdb551b",
+      "revId": "71ac4c9d9de8fe681c93ea2ada959b1d3001b108",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
