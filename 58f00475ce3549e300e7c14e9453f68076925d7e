@@ -16,6 +16,24 @@
       "revId": "58f00475ce3549e300e7c14e9453f68076925d7e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_173be6ec",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 3545
+      },
+      "writtenOn": "2014-02-03T20:36:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fade3982_eb5e6175",
+      "revId": "58f00475ce3549e300e7c14e9453f68076925d7e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
