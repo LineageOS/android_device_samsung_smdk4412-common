@@ -922,9 +922,13 @@ int exynos_camera_params_apply(struct exynos_camera *exynos_camera, int force)
 				if (rc < 0)
 					ALOGE("%s: Unable to set object y position", __func__);
 			}
-		}
 
-		focus_mode = FOCUS_MODE_TOUCH;
+			/* After taking a picture, focus-areas is reseted by stock camera app to the center of the screen */
+			if (! ( (focus_x == (preview_width / 2)) && (focus_y == (preview_height / 2)) )) {
+				//ALOGV("%s focus_mode changed to %d due to focus-areas='%s'", __func__, focus_mode, focus_areas_string);
+				focus_mode = FOCUS_MODE_TOUCH;
+			}
+		}
 
 	}
 
