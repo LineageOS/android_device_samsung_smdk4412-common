@@ -23,7 +23,7 @@ healthd_board_init(struct healthd_config *config)
     config->batteryCapacityPath    = "/sys/class/power_supply/battery/capacity";
     config->batteryStatusPath      = "/sys/class/power_supply/battery/status";
     config->batteryVoltagePath     = "/sys/class/power_supply/battery/voltage_now";
-    config->batteryCurrentNowPath  = "/sys/class/power_supply/battery/batt_current_now";
+    config->batteryCurrentNowPath  = "/sys/class/power_supply/battery/current_now";
     config->batteryPresentPath     = "/sys/class/power_supply/battery/present";
     config->batteryHealthPath      = "/sys/class/power_supply/battery/health";
     config->batteryTemperaturePath = "/sys/class/power_supply/battery/temp";
