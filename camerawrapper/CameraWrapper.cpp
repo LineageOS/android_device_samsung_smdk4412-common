@@ -22,7 +22,7 @@
 */
 
 
-#define LOG_NDEBUG 1
+#define LOG_NDEBUG 0
 //#define LOG_PARAMETERS
 
 #define LOG_TAG "CameraWrapper"
@@ -37,6 +37,8 @@
 
 static android::Mutex gCameraWrapperLock;
 static camera_module_t *gVendorModule = 0;
+
+bool preview_running = false;
 
 static int camera_device_open(const hw_module_t* module, const char* name,
                 hw_device_t** device);
@@ -206,13 +208,19 @@ int camera_msg_type_enabled(struct camera_device * device, int32_t msg_type)
 
 int camera_start_preview(struct camera_device * device)
 {
-    ALOGV("%s", __FUNCTION__);
+    int rc;
+
+	ALOGV("%s", __FUNCTION__);
     ALOGV("%s->%08X->%08X", __FUNCTION__, (uintptr_t)device, (uintptr_t)(((wrapper_camera_device_t*)device)->vendor));
 
     if(!device)
         return -EINVAL;
 
-    return VENDOR_CALL(device, start_preview);
+    rc = VENDOR_CALL(device, start_preview);
+    if (rc)
+        preview_running = true;
+
+    return rc;
 }
 
 void camera_stop_preview(struct camera_device * device)
@@ -227,6 +235,8 @@ void camera_stop_preview(struct camera_device * device)
     VENDOR_CALL(device, send_command, 7, 0, 0);
 
     VENDOR_CALL(device, stop_preview);
+
+    preview_running = false;
 }
 
 int camera_preview_enabled(struct camera_device * device)
@@ -317,7 +327,10 @@ int camera_cancel_auto_focus(struct camera_device * device)
     if(!device)
         return -EINVAL;
 
-    return VENDOR_CALL(device, cancel_auto_focus);
+    if (preview_running)
+        return VENDOR_CALL(device, cancel_auto_focus);
+    else
+        return 0;
 }
 
 int camera_take_picture(struct camera_device * device)
