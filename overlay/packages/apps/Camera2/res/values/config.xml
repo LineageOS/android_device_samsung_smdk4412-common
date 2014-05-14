@@ -21,4 +21,6 @@
     <!-- Use ZSL mode -->
     <bool name="enableZSL">true</bool>
     <bool name="useContinuosFocusForTouch">true</bool>
+    <!-- Samsung Camcorder Mode -->
+    <bool name="needsSamsungCamMode">true</bool>
 </resources>
