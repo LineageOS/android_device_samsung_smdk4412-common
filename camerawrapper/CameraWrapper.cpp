@@ -103,6 +103,7 @@ static char * camera_fixup_getparams(int id, const char * settings)
     // fix params here
     params.set(android::CameraParameters::KEY_SUPPORTED_ISO_MODES, iso_values[id]);
     params.set(android::CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
+    params.set(android::CameraParameters::KEY_VIDEO_SNAPSHOT_SUPPORTED, "true");
 
     android::String8 strParams = params.flatten();
     char *ret = strdup(strParams.string());
