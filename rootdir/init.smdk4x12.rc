@@ -1,8 +1,11 @@
-import init.target.rc
-import init.smdk4x12.usb.rc
+﻿# Init for devices built on Samsung SMDK4412 platform
+
+import /init.target.rc
+import /init.smdk4x12.usb.rc
 
 on init
     chmod 0701 /mnt/media_rw
+    chown root root /mnt/media_rw
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage 0550 system sdcard_r
     mkdir /storage/emulated 0555 root root
@@ -64,6 +67,14 @@ on post-fs-data
     chmod 0775 /data/misc/radio
     mkdir /efs/imei 0775 radio system
 
+# icd
+    exec icd_check
+    chown system system /dev/icd
+    chmod 0644 /dev/icd
+    write /dev/icdr 0
+    chown system system /dev/icdr
+    chmod 0644 /dev/icdr
+    chown system system /dev/tzic
 
 # HDCP 2.x
     mkdir /data/system/hdcp2 0775 system system
