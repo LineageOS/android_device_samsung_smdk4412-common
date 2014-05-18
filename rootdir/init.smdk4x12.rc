@@ -500,3 +500,10 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 service macloader /system/bin/macloader
     class main
     oneshot
+
+# Workaround for broken incall audio
+service bootsnd /system/bin/tinyplay /system/etc/sound/silence.wav -D 0 -d 0 -p 880
+    class late_start
+    user root
+    group audio
+    oneshot
