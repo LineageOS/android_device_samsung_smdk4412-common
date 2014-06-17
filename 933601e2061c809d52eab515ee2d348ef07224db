@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_bf2f78f5",
+        "filename": "overlay/frameworks/base/core/res/res/values/config.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2232
+      },
+      "writtenOn": "2014-06-17T04:33:05Z",
+      "side": 0,
+      "message": "This is needed for torch to appear in tile options",
+      "revId": "933601e2061c809d52eab515ee2d348ef07224db",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
