@@ -129,6 +129,8 @@ on post-fs-data
     chown system system /sys/class/sec/sec_touchkey/timeout
     chmod 0660 /sys/class/sec/sec_touchkey/force_disable
     chown system system /sys/class/sec/sec_touchkey/force_disable
+    chmod 0660 /sys/class/sec/sec_touchkey/keypad_enable
+    chown system system /sys/class/sec/sec_touchkey/keypad_enable
 
 # S-Pen
     chown system system /sys/class/sec/sec_epen/epen_saving_mode
