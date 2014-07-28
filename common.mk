@@ -70,6 +70,7 @@ PRODUCT_PACKAGES := \
     gralloc.exynos4 \
     hwcomposer.exynos4 \
     libfimg \
+    libexynosfimc \
     libnetcmdiface \
     libsecion \
     libsync \
