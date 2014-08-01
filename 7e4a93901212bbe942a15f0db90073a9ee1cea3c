@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a061dce_7710514f",
+        "filename": "BoardCommonConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 3545
+      },
+      "writtenOn": "2014-08-01T12:46:32Z",
+      "side": 0,
+      "message": "This is needed for blob camera hal.",
+      "revId": "7e4a93901212bbe942a15f0db90073a9ee1cea3c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a061dce_7737b1e3",
+        "filename": "BoardCommonConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3545
+      },
+      "writtenOn": "2014-08-01T12:46:32Z",
+      "side": 1,
+      "message": "How are you sure it\u0027s I2C_7?",
+      "revId": "cfeca322096422000696b71e21e9f348d1110fdb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
