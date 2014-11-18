@@ -122,6 +122,14 @@ PRODUCT_PACKAGES += \
     VisualizationWallpapers \
     librs_jni
 
+#wifi
+PRODUCT_PACKAGES := \
+    libwpa_client \
+    hostapd \
+    dhcpcd.conf \
+    wpa_supplicant \
+    wpa_supplicant.conf
+
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
