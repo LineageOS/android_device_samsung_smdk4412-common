@@ -126,7 +126,7 @@ PRODUCT_PACKAGES += \
     librs_jni
 
 #wifi
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
     libwpa_client \
     hostapd \
     dhcpcd.conf \
