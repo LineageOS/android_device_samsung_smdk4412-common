@@ -59,9 +59,6 @@
          in to AC and 2 to stay on when plugged in to USB.  (So 3 for both.) -->
     <integer name="config_deskDockKeepsScreenOn">0</integer>
 
-    <!-- Device supports LED flashlight -->
-    <!--<bool name="config_enableTorch">true</bool>-->
-
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
         The N entries of this array define N + 1 zones as follows:
 
