@@ -162,5 +162,11 @@ BOARD_BATTERY_DEVICE_NAME := "battery"
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 
+# Healthd Charger
+RED_LED_PATH := /sys/class/leds/led_r/brightness
+GREEN_LED_PATH := /sys/class/leds/led_g/brightness
+BLUE_LED_PATH := /sys/class/leds/led_b/brightness
+BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
+
 # inherit from the proprietary version
 -include vendor/samsung/smdk4412-common/BoardConfigVendor.mk
