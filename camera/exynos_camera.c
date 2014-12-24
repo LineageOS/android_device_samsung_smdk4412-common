@@ -3209,12 +3209,12 @@ void exynos_camera_auto_focus_stop(struct exynos_camera *exynos_camera)
 
 	ALOGD("%s()", __func__);
 
-	rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SET_AUTO_FOCUS, AUTO_FOCUS_OFF);
-	if (rc < 0)
-		ALOGE("%s: Unable to set auto-focus off", __func__);
-
-	if (exynos_camera->auto_focus_enabled)
-		exynos_camera_auto_focus_finish(exynos_camera);
+	if (exynos_camera->auto_focus_enabled) {
+		rc = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_CAMERA_SET_AUTO_FOCUS, AUTO_FOCUS_OFF);
+		if (rc < 0)
+			ALOGE("%s: Unable to set auto-focus off", __func__);
+			exynos_camera_auto_focus_finish(exynos_camera);
+	}
 
 }
 
