@@ -159,6 +159,11 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 # Charging mode
 BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
 BOARD_BATTERY_DEVICE_NAME := "battery"
+BOARD_CHARGER_ENABLE_SUSPEND := true
+RED_LED_PATH := /sys/class/leds/led_r/brightness
+GREEN_LED_PATH := /sys/class/leds/led_g/brightness
+BLUE_LED_PATH := /sys/class/leds/led_b/brightness
+BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
 
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
