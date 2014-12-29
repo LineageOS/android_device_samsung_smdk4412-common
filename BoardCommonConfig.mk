@@ -78,6 +78,9 @@ BOARD_USES_SKIAHWJPEG := true
 COMMON_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D -DFORCE_SCREENSHOT_CPU_PATH -DWORKAROUND_BUG_10194508 -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
+# DRM
+COMMON_GLOBAL_CFLAGS += -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+
 # FIMG Acceleration
 BOARD_USES_FIMGAPI := true
 BOARD_USES_SKIA_FIMGAPI := true
@@ -159,15 +162,14 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 # Charging mode
 BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
 BOARD_BATTERY_DEVICE_NAME := "battery"
-
-# Override healthd HAL
-BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
-
-# Healthd Charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
 RED_LED_PATH := /sys/class/leds/led_r/brightness
 GREEN_LED_PATH := /sys/class/leds/led_g/brightness
 BLUE_LED_PATH := /sys/class/leds/led_b/brightness
 BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
+
+# Override healthd HAL
+BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 
 # inherit from the proprietary version
 -include vendor/samsung/smdk4412-common/BoardConfigVendor.mk
