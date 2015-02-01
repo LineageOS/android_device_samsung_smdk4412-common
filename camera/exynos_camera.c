@@ -2364,10 +2364,14 @@ int exynos_camera_preview(struct exynos_camera *exynos_camera)
 	}
 
 	if (exynos_camera->preview_window != NULL && exynos_camera->gralloc != NULL) {
-		exynos_camera->preview_window->dequeue_buffer(exynos_camera->preview_window, &window_buffer, &window_stride);
-		exynos_camera->gralloc->lock(exynos_camera->gralloc, *window_buffer, GRALLOC_USAGE_SW_WRITE_OFTEN, 0, 0, width, height, &window_data);
+		int ret = exynos_camera->preview_window->dequeue_buffer(exynos_camera->preview_window, &window_buffer, &window_stride);
+		if (ret < 0) {
+			ALOGE("%s: Error in dequeueing buffer", __func__);
+			goto error;
+		}
+		ret = exynos_camera->gralloc->lock(exynos_camera->gralloc, *window_buffer, GRALLOC_USAGE_YUV_ADDR | GRALLOC_USAGE_SW_WRITE_OFTEN, 0, 0, width, height, &window_data);
 
-		if (window_data == NULL) {
+		if (window_data == NULL || ret == -EINVAL) {
 			ALOGE("%s: Unable to lock gralloc", __func__);
 			goto error;
 		}
