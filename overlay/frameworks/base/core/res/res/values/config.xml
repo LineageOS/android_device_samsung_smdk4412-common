@@ -177,4 +177,7 @@
         <item>0</item>
         <item>0</item>
     </integer-array>
+    <!-- Workaround for devices with broken keyboards -->
+    <bool name="config_forceDisableHardwareKeyboard">true</bool>
+    <bool name="config_forceShowImeWithHardKeyboard">true</bool>
 </resources>
