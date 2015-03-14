@@ -167,6 +167,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
+# Keylayouts
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/excluded-input-devices.xml:system/etc/excluded-input-devices.xml
+
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.zygote.disable_gl_preload=1 \
