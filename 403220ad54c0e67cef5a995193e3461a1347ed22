@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac665da_f26c559e",
+        "filename": "rootdir/init.smdk4x12.rc",
+        "patchSetId": 2
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 7231
+      },
+      "writtenOn": "2015-04-04T17:57:54Z",
+      "side": 1,
+      "message": "Same for ^",
+      "revId": "403220ad54c0e67cef5a995193e3461a1347ed22",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
