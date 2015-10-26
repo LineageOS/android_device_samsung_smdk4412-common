@@ -54,7 +54,7 @@ TARGET_PROVIDES_INIT := true
 TARGET_PROVIDES_INIT_TARGET_RC := true
 
 # Kernel
-BOARD_KERNEL_CMDLINE := console=ttySAC2,115200
+BOARD_KERNEL_CMDLINE := console=ttySAC2,115200 consoleblank=0 androidboot.hardware=smdk4x12 androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_PAGESIZE := 2048
 

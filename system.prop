@@ -6,3 +6,6 @@ rild.libpath=/system/lib/libsec-ril.so
 rild.libargs=-d /dev/ttyS0
 ro.sf.lcd_density=320
 ro.lcd_min_brightness=20
+ro.build.sepolicy=0
+ro.build.selinux=0
+
