@@ -483,7 +483,7 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 	oneshot
 
 service macloader /system/bin/macloader
-    class main
+    class late_start
     oneshot
 
 # Workaround for broken incall audio
