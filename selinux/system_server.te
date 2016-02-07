@@ -1,0 +1,11 @@
+allow system_server efs_file:dir search;
+allow system_server efs_file:file r_file_perms;
+allow system_server efs_device_file:dir search; 
+
+allow system_server uhid_device:chr_file { read write open ioctl };
+
+allow system_server self:capability sys_module;
+
+# for sensors
+allow system_server system_file:file execmod;
+

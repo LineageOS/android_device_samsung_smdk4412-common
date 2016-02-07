@@ -1,0 +1,18 @@
+type firmware_mfc, file_type;
+type firmware_camera, file_type;
+
+type sensors_data_file, file_type, data_file_type;
+type sysfs_display, fs_type, sysfs_type;
+
+type efs_device_file, file_type;
+type sysfs_radio, fs_type, sysfs_type;
+type sysfs_sensor, fs_type, sysfs_type;
+
+type tinyplay, domain;
+type tinyplay_exec, exec_type, file_type;
+init_daemon_domain(tinyplay);
+
+type macloader, domain;
+type macloader_exec, exec_type, file_type;
+init_daemon_domain(macloader);
+

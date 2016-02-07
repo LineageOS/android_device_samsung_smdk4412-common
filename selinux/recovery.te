@@ -1,0 +1,5 @@
+# allow minivold access to /sbin/blkid - needed for sdcard
+allow blkid_untrusted shell_exec:file entrypoint;
+
+# allow healthd access to /dev
+allow healthd device:dir write;

@@ -1,0 +1,1 @@
+allow { shell debuggerd } log_device:chr_file { read };
