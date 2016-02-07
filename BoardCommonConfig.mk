@@ -165,6 +165,9 @@ GREEN_LED_PATH := /sys/class/leds/led_g/brightness
 BLUE_LED_PATH := /sys/class/leds/led_b/brightness
 BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
 
+# SELinux
+BOARD_SEPOLICY_DIRS += device/samsung/smdk4412-common/selinux
+
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 

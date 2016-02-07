@@ -1,0 +1,2 @@
+allow rild log_device:chr_file w_file_perms;
+allow rild rild:process execmem;

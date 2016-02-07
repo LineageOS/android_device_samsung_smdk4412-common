@@ -1,0 +1,2 @@
+allow tinyplay audio_device:chr_file { open read write ioctl };
+allow tinyplay audio_device:dir search;
