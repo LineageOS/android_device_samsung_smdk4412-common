@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffb9cba7_e1c87a75",
+        "filename": "configs/media_codecs.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 11814
+      },
+      "writtenOn": "2016-02-14T22:32:30Z",
+      "side": 1,
+      "message": "This is no longer needed:]]",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 46
+      },
+      "revId": "99cce2130b72f1b40b0c3012b24f8e6d78f04652",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
