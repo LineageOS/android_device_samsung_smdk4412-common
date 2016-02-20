@@ -20,7 +20,6 @@ system/etc/wifi/nvram_net.txt_semcosh
 system/lib/egl/libEGL_mali.so
 system/lib/egl/libGLESv1_CM_mali.so
 system/lib/egl/libGLESv2_mali.so
-system/lib/libaudiosa.so
 system/lib/libcec.so
 system/lib/libddc.so
 system/lib/libedid.so
@@ -52,8 +51,6 @@ system/vendor/firmware/SlimISP_ZH.bin
 system/vendor/firmware/SlimISP_ZK.bin
 system/vendor/firmware/SlimISP_ZM.bin
 system/vendor/lib/drm/libdrmwvmplugin.so
-system/vendor/lib/liblvverx.so
-system/vendor/lib/liblvvetx.so
 system/vendor/lib/libwvdrm_L1.so
 system/vendor/lib/libwvm.so
 system/vendor/lib/libWVStreamControlAPI_L1.so
