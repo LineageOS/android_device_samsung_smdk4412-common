@@ -77,6 +77,7 @@ PRODUCT_PACKAGES := \
     libsync \
     lights.exynos4 \
     macloader \
+	SamsungDoze \
     Snap \
     tinymix
 
