@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cyanogenmod.settings.device;
+package com.cyanogenmod.settings.advanceddisplay;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -30,14 +30,14 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.cyanogenmod.settings.device.R;
+import com.cyanogenmod.settings.advanceddisplay.R;
 
 public class SeekBarPreference extends Preference implements OnSeekBarChangeListener {
 
     private final String TAG = getClass().getName();
 
     private static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
-    private static final String ADVANCEDDISPLAY = "http://schemas.android.com/apk/res/com.cyanogenmod.settings.device";
+    private static final String ADVANCEDDISPLAY = "http://schemas.android.com/apk/res/com.cyanogenmod.settings.advanceddisplay";
     private static final int DEFAULT_VALUE = 50;
 
     private int mMaxValue      = 100;
