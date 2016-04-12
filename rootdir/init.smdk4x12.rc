@@ -6,7 +6,6 @@ import /init.smdk4x12.usb.rc
 on init
 
     # Support legacy paths
-    symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
 
     mkdir /efs 0771 radio system
