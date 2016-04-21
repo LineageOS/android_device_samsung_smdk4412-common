@@ -23,7 +23,6 @@ system/lib/egl/libGLESv2_mali.so
 system/lib/libcec.so
 system/lib/libddc.so
 system/lib/libedid.so
-system/lib/libfimc.so
 system/lib/libfimg.so
 system/lib/libhwconverter.so
 system/lib/libhwjpeg.so
@@ -32,7 +31,6 @@ system/lib/libMcClient.so
 system/lib/libMcRegistry.so
 system/lib/libMcVersion.so
 system/lib/libsecnativefeature.so
-system/lib/libUMP.so
 system/usr/idc/melfas_ts.idc
 system/usr/idc/sec_touchscreen.idc
 system/usr/keylayout/gpio-keys.kl
