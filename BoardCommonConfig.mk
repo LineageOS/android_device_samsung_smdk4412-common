@@ -141,7 +141,7 @@ BOARD_HAVE_SAMSUNG_WIFI          := true
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_HAVE_SAMSUNG_BLUETOOTH := true
-BOARD_BLUEDROID_VENDOR_CONF := device/samsung/smdk4412-common/bluetooth/vnd_smdk4x12.txt
+BOARD_CUSTOM_BT_CONFIG := device/samsung/smdk4412-common/bluetooth/vnd_smdk4x12.txt
 
 # Vold
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/s3c-usbgadget/gadget/lun%d/file"
