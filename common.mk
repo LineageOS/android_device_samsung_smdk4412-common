@@ -62,7 +62,6 @@ PRODUCT_COPY_FILES += \
 
 # Packages
 PRODUCT_PACKAGES := \
-    AdvancedDisplay \
     audio.a2dp.default \
     audio.primary.smdk4x12 \
     audio.r_submix.default \
