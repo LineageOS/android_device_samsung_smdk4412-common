@@ -2201,8 +2201,8 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 		exynos_camera->capture_jpeg_buffer = NULL;
 	}
 
-	if (&exynos_camera->exif.enabled)
-		exynos_exif_stop(exynos_camera, &exynos_camera->exif);
+	if (exynos_camera->exif.enabled)
+		exynos_exif_stop(exynos_camera, &(exynos_camera->exif));
 
 	exynos_camera->capture_enabled = 0;
 }
