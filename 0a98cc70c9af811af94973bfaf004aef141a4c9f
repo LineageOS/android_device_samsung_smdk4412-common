@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fa4df85_e4e86f17",
+        "filename": "BoardCommonConfig.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-08-28T21:37:32Z",
+      "side": 1,
+      "message": "These are already set in build/core/combo/arch/arm/armv7-a-neon.mk since a few releases",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 71
+      },
+      "revId": "0a98cc70c9af811af94973bfaf004aef141a4c9f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
