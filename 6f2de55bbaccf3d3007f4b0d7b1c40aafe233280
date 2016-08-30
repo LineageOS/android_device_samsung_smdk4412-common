@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fa4df85_0846f524",
+        "filename": "camera/exynos_camera.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 3766,
+      "author": {
+        "id": 11604
+      },
+      "writtenOn": "2016-08-30T23:48:30Z",
+      "side": 1,
+      "message": "freed on close",
+      "revId": "6f2de55bbaccf3d3007f4b0d7b1c40aafe233280",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
