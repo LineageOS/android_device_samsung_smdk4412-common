@@ -3816,6 +3816,10 @@ int exynos_camera_open(const struct hw_module_t* module, const char *camera_id,
 	camera_device->priv = exynos_camera;
 
 	*device = (struct hw_device_t *) &(camera_device->common);
+	
+	if (camera_device)
+		//preventing a memory leak
+	free (camera_device);
 
 	return 0;
 
