@@ -100,7 +100,7 @@ int exynos_ion_alloc(struct exynos_camera *exynos_camera, int size)
 	return share_data.fd;
 }
 
-int exynos_ion_free(struct exynos_camera *exynos_camera, int fd)
+int exynos_ion_free(struct exynos_camera __unused *exynos_camera, int fd)
 {
 	close(fd);
 	return 0;
