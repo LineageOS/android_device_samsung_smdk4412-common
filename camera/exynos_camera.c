@@ -2201,7 +2201,7 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 		exynos_camera->capture_jpeg_buffer = NULL;
 	}
 
-	if (&exynos_camera->exif.enabled)
+	if (exynos_camera->exif.enabled)
 		exynos_exif_stop(exynos_camera, &exynos_camera->exif);
 
 	exynos_camera->capture_enabled = 0;
@@ -3485,7 +3485,7 @@ int exynos_camera_recording_enabled(struct camera_device *dev)
 }
 
 void exynos_camera_release_recording_frame(struct camera_device *dev,
-	const void *opaque)
+	const void __unused *opaque)
 {
 	struct exynos_camera *exynos_camera;
 
