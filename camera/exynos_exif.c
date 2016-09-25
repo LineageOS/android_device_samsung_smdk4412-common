@@ -163,9 +163,9 @@ int exynos_exif_attributes_create_gps(struct exynos_camera *exynos_camera,
 		attributes->gps_altitude_ref = 1;
 
 
-	gps_latitude_abs = fabs(gps_latitude);
-	gps_longitude_abs = fabs(gps_longitude);
-	gps_altitude_abs = fabs(gps_altitude);
+	gps_latitude_abs = labs(gps_latitude);
+	gps_longitude_abs = labs(gps_longitude);
+	gps_altitude_abs = labs(gps_altitude);
 
 	attributes->gps_latitude[0].num = (uint32_t) gps_latitude_abs;
 	attributes->gps_latitude[0].den = 10000000;
