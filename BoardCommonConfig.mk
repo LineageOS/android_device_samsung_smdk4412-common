@@ -71,7 +71,6 @@ TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HARDWARE_CLASS := hardware/samsung/cmhw
 
 # Graphics
-BOARD_EGL_CFG := device/samsung/smdk4412-common/configs/egl.cfg
 BOARD_EGL_NEEDS_HANDLE_VALUE := true
 USE_OPENGL_RENDERER := true
 BOARD_USES_SKIAHWJPEG := true
