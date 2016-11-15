@@ -1,2 +1,19 @@
+# GFX
+/dev/mali                               u:object_r:gpu_device:s0
+/dev/ump                                u:object_r:gpu_device:s0
+/dev/fimg2d                             u:object_r:gpu_device:s0
+
+# Camera
+/dev/s3c-mfc                            u:object_r:mfc_device:s0
+/dev/exynos-mem                         u:object_r:video_device:s0
+/data/ISP_CV                            u:object_r:camera_data_file:s0
+
+# Firmware
+/system/vendor/firmware(/.*)?           u:object_r:firmware_exynos:s0
+/system/vendor/firwmare/mfc_fw.bin      u:object_r:firmware_mfc:s0
+/data/cfw(/.*)?                         u:object_r:firmware_exynos:s0
+
 /system/bin/macloader                   u:object_r:macloader_exec:s0
 /system/bin/tinyplay                    u:object_r:tinyplay_exec:s0
+
+/sys/module/dhd/parameters(/.*)?		u:object_r:sysfs_macloader:s0
