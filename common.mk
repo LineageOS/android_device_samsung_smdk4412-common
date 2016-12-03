@@ -38,10 +38,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
-# Netflix hack
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/98netflix:system/etc/init.d/98netflix
-
 # Wifi
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
