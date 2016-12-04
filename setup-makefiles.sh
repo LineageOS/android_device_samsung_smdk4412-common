@@ -33,32 +33,26 @@ if [ ! -f "$HELPER" ]; then
 fi
 . "$HELPER"
 
-if [ $# -eq 0 ]; then
-    SRC=adb
-else
-    if [ $# -eq 1 ]; then
-        SRC=$1
-    else
-        echo "$0: bad number of arguments"
-        echo ""
-        echo "usage: $0 [PATH_TO_EXPANDED_ROM]"
-        echo ""
-        echo "If PATH_TO_EXPANDED_ROM is not specified, blobs will be extracted from"
-        echo "the device using adb pull."
-        exit 1
-    fi
-fi
-
 # Initialize the helper for common device
 setup_vendor "$DEVICE_COMMON" "$VENDOR" "$CM_ROOT" true
 
-extract "$MY_DIR"/proprietary-files.txt "$SRC"
+# Copyright headers and common guards
+write_headers "i9300 i9305 n7100 n8000 n8013 n8020 t0lte t0lteatt t0ltetmo i605 l900 r950 i925 n5100 n5110 n5120"
 
-if [ "$DEVICE" '!=' "nodevice" ]; then
+write_makefiles "$MY_DIR"/proprietary-files.txt
+
+write_footers
+
+if [ "$DEVICE" "!=" "nodevice" ]; then
     # Reinitialize the helper for the device-specific blobs
     setup_vendor "$DEVICE" "$VENDOR" "$CM_ROOT"
 
-    extract "$MY_DIR"/../$DEVICE/proprietary-files.txt "$SRC"
-fi
+    # Copyright headers and guards
+    write_headers
 
-"$MY_DIR"/setup-makefiles.sh
+    # The device-specific blobs
+    write_makefiles "$MY_DIR"/../$DEVICE/proprietary-files.txt
+
+    # Done
+    write_footers
+fi
