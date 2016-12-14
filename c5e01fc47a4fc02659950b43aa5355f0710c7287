@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f681702_abcacf6a",
+        "filename": "selinux/file_contexts",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 16296
+      },
+      "writtenOn": "2016-12-14T02:07:42Z",
+      "side": 1,
+      "message": "This line prevents Galaxy Tab 3 8 in (lt01xxx) devices from booting",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 63
+      },
+      "revId": "c5e01fc47a4fc02659950b43aa5355f0710c7287",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
