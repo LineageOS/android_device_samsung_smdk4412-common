@@ -44,6 +44,7 @@ system/vendor/firmware/SlimISP_GD.bin
 system/vendor/firmware/SlimISP_GH.bin
 system/vendor/firmware/SlimISP_GK.bin
 system/vendor/firmware/SlimISP_JH.bin
+system/vendor/firmware/SlimISP_PH.bin
 system/vendor/firmware/SlimISP_WH.bin
 system/vendor/firmware/SlimISP_ZD.bin
 system/vendor/firmware/SlimISP_ZH.bin
