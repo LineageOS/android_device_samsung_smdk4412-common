@@ -62,11 +62,13 @@ PRODUCT_PACKAGES := \
     Gello \
     gralloc.exynos4 \
     hwcomposer.exynos4 \
+    libfimc \
     libfimg \
     libnetcmdiface \
     libsecion \
     libstlport \
     libsync \
+    libUMP \
     lights.exynos4 \
     macloader \
     tinymix
