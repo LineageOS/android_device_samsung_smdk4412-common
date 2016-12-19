@@ -64,6 +64,8 @@ PRODUCT_PACKAGES := \
     hwcomposer.exynos4 \
     libfimc \
     libfimg \
+    libhwconverter \
+    libhwjpeg \
     libnetcmdiface \
     libsecion \
     libstlport \
