@@ -71,7 +71,7 @@ PRODUCT_PACKAGES := \
     libstlport \
     libsync \
     libUMP \
-    lights.exynos4 \
+    lights.smdk4x12 \
     macloader \
     tinymix
 
