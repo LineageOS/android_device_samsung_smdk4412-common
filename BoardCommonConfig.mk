@@ -79,6 +79,7 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 # Only needed by Samsung skia changes (not ported beyond 4.4)
 #BOARD_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D
 BOARD_GLOBAL_CFLAGS += -DFORCE_SCREENSHOT_CPU_PATH
+BOARD_USE_MALI_ALIGNMENT := true
 
 # FIMG Acceleration
 BOARD_USES_FIMGAPI := true
@@ -86,10 +87,6 @@ BOARD_USES_SKIA_FIMGAPI := true
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
-
-# HWComposer
-BOARD_USES_HWCOMPOSER := true
-BOARD_USE_SYSFS_VSYNC_NOTIFICATION := true
 
 # Camera
 BOARD_CAMERA_HAVE_ISO := true
