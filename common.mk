@@ -165,8 +165,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.zygote.disable_gl_preload=1 \
     ro.opengles.version=131072 \
-    ro.bq.gpu_to_cpu_unsupported=1 \
-    debug.hwui.render_dirty_regions=false
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
