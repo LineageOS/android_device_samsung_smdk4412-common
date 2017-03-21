@@ -20,9 +20,6 @@ etc/wifi/nvram_net.txt_semcosh
 lib/egl/libEGL_mali.so
 lib/egl/libGLESv1_CM_mali.so
 lib/egl/libGLESv2_mali.so
-lib/libcec.so
-lib/libddc.so
-lib/libedid.so
 lib/libMali.so
 lib/libMcClient.so
 lib/libMcRegistry.so
