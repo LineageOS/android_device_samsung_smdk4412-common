@@ -169,5 +169,20 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 # LPM Battery Percentage
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 
+# TWRP
+BOARD_HAS_NO_REAL_SDCARD := true
+RECOVERY_SDCARD_ON_DATA := true
+TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel/brightness"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sdcard"
+TW_EXTERNAL_STORAGE_PATH := "/external_sdcard"
+TW_HAS_DOWNLOAD_MODE := true
+TW_INCLUDE_CRYPTO := true
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_INTERNAL_STORAGE_PATH := "/data/media"
+TW_MAX_BRIGHTNESS := 255
+TW_NO_REBOOT_BOOTLOADER := true
+TW_THEME := portrait_mdpi
+TW_USE_TOOLBOX := true
+
 # inherit from the proprietary version
 -include vendor/samsung/smdk4412-common/BoardConfigVendor.mk
