@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ifneq ($(filter i9300 i9305 n7100 t0lte t0lteatt t0ltetmo t0lteskt t0ltektt i605 l900 r950,$(TARGET_DEVICE)),)
+ifneq ($(filter i9300 i9305 n7100 t0lte t0lteatt t0ltetmo t0ltekor i605 l900 r950,$(TARGET_DEVICE)),)
 
 LOCAL_PATH := $(call my-dir)
 
