@@ -110,6 +110,7 @@ struct exynos_camera_videosnapshot_resolution {
 struct exynos_camera_params {
 	char *preview_size_values;
 	char *preview_size;
+        char *preview_video_size;
 	char *preview_format_values;
 	char *preview_format;
 	char *preview_frame_rate_values;
