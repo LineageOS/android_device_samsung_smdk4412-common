@@ -16,7 +16,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(filter i9300 i9305 n7100 n8000 n8013 n8020 t0lte t0lteatt t0ltetmo t0ltekor i605 l900 r950 i925 n5100 n5110 n5120 lt013g lt01wifi lt01lte,$(TARGET_DEVICE)),)
+ifneq ($(filter i9300 i9305 n7100 n8000 n8013 n8020 t0lte t0lteatt t0ltetmo t0ltekor t0ltejpn i605 l900 r950 i925 n5100 n5110 n5120 lt013g lt01wifi lt01lte,$(TARGET_DEVICE)),)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
