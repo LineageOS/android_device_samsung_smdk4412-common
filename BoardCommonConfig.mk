@@ -151,6 +151,11 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 
+# TWRP Support - Optional
+ifeq ($(WITH_TWRP),true)
+-include device/samsung/smdk4412-common/twrp/twrp.mk
+endif
+
 # SELinux
 BOARD_SEPOLICY_DIRS += device/samsung/smdk4412-common/selinux
 
