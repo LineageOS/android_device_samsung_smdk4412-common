@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7b2f76a_6dcd62e5",
+        "filename": "twrp/twrp.fstab",
+        "patchSetId": 10
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 11409
+      },
+      "writtenOn": "2017-10-23T04:35:24Z",
+      "side": 1,
+      "message": "The fstab for i9300 accepts ext4 and f2fs for /cache.",
+      "revId": "e5734d09a16b97b7d55d3acf9d3e63e1b4653bd8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b4e28fb_7463a76f",
+        "filename": "twrp/twrp.fstab",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 11409
+      },
+      "writtenOn": "2017-10-23T04:35:24Z",
+      "side": 1,
+      "message": "also here: i9300 allows ext4 and f2fs for /data. Is there a compatibility issue?",
+      "revId": "e5734d09a16b97b7d55d3acf9d3e63e1b4653bd8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
