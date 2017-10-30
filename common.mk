@@ -72,6 +72,7 @@ PRODUCT_PACKAGES := \
     libUMP \
     lights.smdk4x12 \
     macloader \
+    Snap\
     tinymix
 
 # MFC API
