@@ -68,8 +68,11 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Hardware tunables
-BOARD_HARDWARE_CLASS := hardware/samsung/cmhw \
-    device/samsung/smdk4412-common/cmhw
+BOARD_HARDWARE_CLASS += device/samsung/smdk4412-common/cmhw
+BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
+ifdef STYLUS_GESTURES
+BOARD_HARDWARE_CLASS += device/samsung/smdk4412-common/stylus/cmhw
+endif
 
 # Graphics
 BOARD_EGL_NEEDS_HANDLE_VALUE := true

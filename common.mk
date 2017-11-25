@@ -160,6 +160,13 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/excluded-input-devices.xml:system/etc/excluded-input-devices.xml
 
+# Stylus gestures
+ifdef STYLUS_GESTURES
+PRODUCT_PACKAGES += \
+    com.cyanogenmod.keyhandler
+DEVICE_PACKAGE_OVERLAYS += $(COMMON_PATH)/stylus/overlay
+endif
+
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.zygote.disable_gl_preload=1 \
