@@ -403,6 +403,7 @@ on boot
     chown radio system /sys/class/sec/sec_epen/epen_checksum
     chown radio system /sys/class/sec/sec_epen/epen_checksum_result
     chown radio system /sys/class/sec/sec_epen/epen_reset
+    chown radio system /sys/class/sec/sec_epen/epen_gestures
 
 # wakeup keys
     chown radio system /sys/class/sec/sec_key/wakeup_keys
