@@ -31,6 +31,3 @@ TW_HAS_DOWNLOAD_MODE := true
 TW_THEME := portrait_hdpi
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
 TW_EXCLUDE_SUPERSU := true
-
-# Prepare for Android O compatibility
-TW_NO_LEGACY_PROPS := true
