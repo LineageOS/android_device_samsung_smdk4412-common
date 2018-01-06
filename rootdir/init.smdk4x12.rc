@@ -152,8 +152,8 @@ on post-fs-data
     chown radio system /sys/android_power/acquire_partial_wake_lock
     chown radio system /sys/android_power/release_wake_lock
     chown radio system /sys/power/state
-    chown radio system /sys/power/wake_lock
-    chown radio system /sys/power/wake_unlock
+    chown radio wakelock /sys/power/wake_lock
+    chown radio wakelock /sys/power/wake_unlock
     chown radio system /sys/power/cpufreq_table
     chown radio system /sys/power/cpufreq_max_limit
     chown radio system /sys/power/cpufreq_min_limit
