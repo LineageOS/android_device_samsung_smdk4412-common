@@ -25,8 +25,10 @@ COMMONPROPS=../smdk4412-common/proprietary-files.txt
 
 mkdir -p ../../../vendor/$VENDOR/$COMMON/proprietary
 
-adb root
-adb wait-for-device
+if [ $# -eq 0 ]; then
+    adb root
+    adb wait-for-device
+fi
 
 echo "Pulling common files..."
 for FILE in `cat $COMMONPROPS | grep -v ^# | grep -v ^$`; do
@@ -34,7 +36,11 @@ for FILE in `cat $COMMONPROPS | grep -v ^# | grep -v ^$`; do
     if [ ! -d $COMMONBASE/$DIR ]; then
         mkdir -p $COMMONBASE/$DIR
     fi
-    adb pull /$FILE $COMMONBASE/$FILE
+    if [ $# -eq 0 ]; then
+        adb pull /$FILE $COMMONBASE/$FILE
+    else
+        cp $1/$FILE $COMMONBASE/$FILE
+    fi
 done
 
 
